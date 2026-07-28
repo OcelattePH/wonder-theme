@@ -1,315 +1,100 @@
-{% render 'section-padding' %}
-
 {%- style -%}
-  #shopify-section-{{ section.id }} .before-after__wrapper {
-    max-width: 100rem;
-    margin: 0 auto;
-    padding: 0 1.5rem;
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
   }
 
   @media screen and (min-width: 750px) {
-    #shopify-section-{{ section.id }} .before-after__wrapper {
-      padding: 0 5rem;
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
     }
-  }
-
-  #shopify-section-{{ section.id }} .before-after__header {
-    text-align: center;
-    margin-bottom: 3rem;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__heading {
-    font-size: 2.4rem;
-    margin: 0 0 1rem;
-  }
-
-  @media screen and (min-width: 750px) {
-    #shopify-section-{{ section.id }} .before-after__heading {
-      font-size: 3rem;
-    }
-  }
-
-  #shopify-section-{{ section.id }} .before-after__text {
-    font-size: 1.4rem;
-    line-height: 1.6;
-    opacity: 0.8;
-    max-width: 60rem;
-    margin: 0 auto;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__text p {
-    margin: 0;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__comparison {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    border-radius: 0.8rem;
-    aspect-ratio: 16 / 9;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__image-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__image-container img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__image-container--after {
-    clip-path: inset(0 0 0 50%);
-  }
-
-  #shopify-section-{{ section.id }} .before-after__placeholder {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(var(--color-foreground), 0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__placeholder--after {
-    background: rgba(var(--color-foreground), 0.1);
-  }
-
-  #shopify-section-{{ section.id }} .before-after__label {
-    position: absolute;
-    top: 1.2rem;
-    padding: 0.4rem 1rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    border-radius: 0.4rem;
-    z-index: 3;
-    pointer-events: none;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__label--before {
-    left: 1.2rem;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__label--after {
-    right: 1.2rem;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__slider-line {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 2px;
-    height: 100%;
-    background: #fff;
-    z-index: 2;
-    pointer-events: none;
-    transform: translateX(-50%);
-  }
-
-  #shopify-section-{{ section.id }} .before-after__slider-handle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #fff;
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    z-index: 3;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  #shopify-section-{{ section.id }} .before-after__slider-handle svg {
-    width: 20px;
-    height: 20px;
-    color: #333;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__range {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    opacity: 0;
-    cursor: ew-resize;
-    z-index: 4;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 40px;
-    height: 100%;
-    cursor: ew-resize;
-  }
-
-  #shopify-section-{{ section.id }} .before-after__range::-moz-range-thumb {
-    width: 40px;
-    height: 100%;
-    cursor: ew-resize;
-    border: none;
-    background: transparent;
   }
 {%- endstyle -%}
 
-<div class="before-after color-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
-  <div class="before-after__wrapper">
-    {%- if section.settings.heading != blank or section.settings.text != blank -%}
-      <div class="before-after__header">
-        {%- if section.settings.heading != blank -%}
-          <h2 class="before-after__heading">{{ section.settings.heading | escape }}</h2>
-        {%- endif -%}
-        {%- if section.settings.text != blank -%}
-          <div class="before-after__text rte">{{ section.settings.text }}</div>
-        {%- endif -%}
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="title inline-richtext {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+        style="text-align: center; margin-bottom: 1.6rem;"
+      >
+        {{ section.settings.heading }}
+      </h2>
+    {%- endif -%}
+
+    {%- if section.settings.text != blank -%}
+      <div class="rte" style="text-align: center; margin-bottom: 3rem; max-width: 60rem; margin-inline: auto;">
+        {{ section.settings.text }}
       </div>
     {%- endif -%}
 
-    <div class="before-after__comparison" id="BeforeAfter-{{ section.id }}">
-      {%- comment -%} Before image (bottom layer, fully visible) {%- endcomment -%}
-      <div class="before-after__image-container before-after__image-container--before">
-        {%- if section.settings.before_image != blank -%}
-          <img
-            src="{{ section.settings.before_image | image_url: width: 1100 }}"
-            alt="{{ section.settings.before_image.alt | escape | default: section.settings.before_label }}"
-            width="{{ section.settings.before_image.width }}"
-            height="{{ section.settings.before_image.height }}"
-            loading="lazy"
-            srcset="
-              {{ section.settings.before_image | image_url: width: 375 }} 375w,
-              {{ section.settings.before_image | image_url: width: 750 }} 750w,
-              {{ section.settings.before_image | image_url: width: 1100 }} 1100w,
-              {{ section.settings.before_image | image_url: width: 1500 }} 1500w,
-              {{ section.settings.before_image | image_url: width: 1920 }} 1920w
-            "
-            sizes="(min-width: 990px) min(100vw, 1200px), 100vw"
-          >
-        {%- else -%}
-          <div class="before-after__placeholder">
-            {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
-          </div>
-        {%- endif -%}
-      </div>
+    <div class="before-after" id="BeforeAfter-{{ section.id }}" style="--split: 50%;">
+      {%- if section.settings.before_image != blank -%}
+        <div class="before-after__image before-after__image--before">
+          {{ section.settings.before_image | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '375, 750, 1100, 1500', sizes: '(min-width: 750px) 80vw, 100vw' }}
+        </div>
+      {%- else -%}
+        <div class="before-after__image before-after__image--before" style="background: #e5e5e5;">
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder' }}
+        </div>
+      {%- endif -%}
 
-      {%- comment -%} After image (top layer, clipped) {%- endcomment -%}
-      <div class="before-after__image-container before-after__image-container--after" data-after-container>
-        {%- if section.settings.after_image != blank -%}
-          <img
-            src="{{ section.settings.after_image | image_url: width: 1100 }}"
-            alt="{{ section.settings.after_image.alt | escape | default: section.settings.after_label }}"
-            width="{{ section.settings.after_image.width }}"
-            height="{{ section.settings.after_image.height }}"
-            loading="lazy"
-            srcset="
-              {{ section.settings.after_image | image_url: width: 375 }} 375w,
-              {{ section.settings.after_image | image_url: width: 750 }} 750w,
-              {{ section.settings.after_image | image_url: width: 1100 }} 1100w,
-              {{ section.settings.after_image | image_url: width: 1500 }} 1500w,
-              {{ section.settings.after_image | image_url: width: 1920 }} 1920w
-            "
-            sizes="(min-width: 990px) min(100vw, 1200px), 100vw"
-          >
-        {%- else -%}
-          <div class="before-after__placeholder before-after__placeholder--after">
-            {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
-          </div>
-        {%- endif -%}
-      </div>
+      {%- if section.settings.after_image != blank -%}
+        <div class="before-after__image before-after__image--after">
+          {{ section.settings.after_image | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '375, 750, 1100, 1500', sizes: '(min-width: 750px) 80vw, 100vw' }}
+        </div>
+      {%- else -%}
+        <div class="before-after__image before-after__image--after" style="background: #d4d4d4;">
+          {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder' }}
+        </div>
+      {%- endif -%}
 
-      {%- comment -%} Labels {%- endcomment -%}
-      <span class="before-after__label before-after__label--before">
-        {{ section.settings.before_label | escape }}
-      </span>
-      <span class="before-after__label before-after__label--after">
-        {{ section.settings.after_label | escape }}
-      </span>
+      <div class="before-after__handle"></div>
+      <input type="range" class="before-after__slider" min="0" max="100" value="50"
+        aria-label="Before and after comparison slider">
 
-      {%- comment -%} Slider line and handle {%- endcomment -%}
-      <div class="before-after__slider-line" data-slider-line></div>
-      <div class="before-after__slider-handle" data-slider-handle>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M18 8l4 4-4 4"/>
-          <path d="M6 8l-4 4 4 4"/>
-        </svg>
-      </div>
-
-      {%- comment -%} Range input for accessible slider control {%- endcomment -%}
-      <input
-        class="before-after__range"
-        type="range"
-        min="0"
-        max="100"
-        value="50"
-        aria-label="Comparison slider"
-        data-before-after-range
-      >
+      <span class="before-after__label before-after__label--before">{{ section.settings.before_label }}</span>
+      <span class="before-after__label before-after__label--after">{{ section.settings.after_label }}</span>
     </div>
   </div>
 </div>
 
 <script>
   (function() {
-    const container = document.getElementById('BeforeAfter-{{ section.id }}');
+    var container = document.getElementById('BeforeAfter-{{ section.id }}');
     if (!container) return;
-
-    const range = container.querySelector('[data-before-after-range]');
-    const afterContainer = container.querySelector('[data-after-container]');
-    const sliderLine = container.querySelector('[data-slider-line]');
-    const sliderHandle = container.querySelector('[data-slider-handle]');
-
-    if (!range || !afterContainer) return;
-
-    function updateSlider(value) {
-      const percent = value + '%';
-      afterContainer.style.clipPath = 'inset(0 0 0 ' + percent + ')';
-      sliderLine.style.left = percent;
-      sliderHandle.style.left = percent;
-    }
-
-    range.addEventListener('input', function() {
-      updateSlider(this.value);
+    var slider = container.querySelector('.before-after__slider');
+    if (!slider) return;
+    slider.addEventListener('input', function() {
+      container.style.setProperty('--split', this.value + '%');
     });
-
-    updateSlider(50);
   })();
 </script>
 
 {% schema %}
 {
-  "name": "Before/after",
+  "name": "Before/After",
   "tag": "section",
   "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
   "settings": [
     {
-      "type": "text",
+      "type": "inline_richtext",
       "id": "heading",
-      "label": "Heading",
-      "default": "See the difference"
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "t:sections.all.heading_size.options__1.label" },
+        { "value": "h1", "label": "t:sections.all.heading_size.options__2.label" },
+        { "value": "h0", "label": "t:sections.all.heading_size.options__3.label" }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
     },
     {
       "type": "richtext",
@@ -341,8 +126,12 @@
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "Color scheme",
+      "label": "t:sections.all.colors.label",
       "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
     },
     {
       "type": "range",
@@ -351,8 +140,8 @@
       "max": 100,
       "step": 4,
       "unit": "px",
-      "default": 36,
-      "label": "Top padding"
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
     },
     {
       "type": "range",
@@ -361,13 +150,13 @@
       "max": 100,
       "step": 4,
       "unit": "px",
-      "default": 36,
-      "label": "Bottom padding"
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 52
     }
   ],
   "presets": [
     {
-      "name": "Before/after"
+      "name": "Before/After"
     }
   ]
 }

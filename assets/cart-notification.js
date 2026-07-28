@@ -1,161 +1,111 @@
-/**
- * Wonder Theme - Cart Notification
- *
- * Toast notification custom element that appears after add-to-cart.
- * Auto-dismisses after 5 seconds.
- */
-
 class CartNotification extends HTMLElement {
   constructor() {
     super();
 
-    this.notification = this.querySelector('#cart-notification');
-    this.closeButton = this.querySelector('.cart-notification__close');
-    this.continueButton = this.querySelector('.cart-notification__continue');
-    this.autoDismissTimer = null;
-    this.autoDismissDelay = 5000;
+    this.notification = document.getElementById('cart-notification');
+    this.header = document.querySelector('sticky-header');
+    this.onBodyClick = this.handleBodyClick.bind(this);
 
-    if (this.closeButton) {
-      this.closeButton.addEventListener('click', () => this.close());
-    }
-
-    if (this.continueButton) {
-      this.continueButton.addEventListener('click', () => this.close());
-    }
-
-    // Listen for add-to-cart events
-    document.addEventListener('cart:item-added', (event) => {
-      this.renderContents(event.detail);
-    });
+    this.notification.addEventListener('keyup', (evt) => evt.code === 'Escape' && this.close());
+    this.querySelectorAll('button[type="button"]').forEach((closeButton) =>
+      closeButton.addEventListener('click', this.close.bind(this))
+    );
   }
 
-  /**
-   * Show the notification with product details after add-to-cart.
-   */
-  renderContents(detail) {
-    const { item, sections } = detail;
+  open() {
+    this.notification.classList.add('animate', 'active');
 
-    // Update product image
-    const imageContainer = this.querySelector('#cart-notification-image');
-    if (imageContainer && item?.featured_image?.url) {
-      imageContainer.innerHTML = `
-        <img
-          src="${item.featured_image.url}"
-          alt="${item.featured_image.alt || item.product_title}"
-          class="cart-notification__image"
-          width="60"
-          height="60"
-          loading="lazy"
-        >
-      `;
-    } else if (imageContainer) {
-      imageContainer.innerHTML = '';
-    }
+    this.notification.addEventListener(
+      'transitionend',
+      () => {
+        this.notification.focus();
+        trapFocus(this.notification);
+      },
+      { once: true }
+    );
 
-    // Update product title
-    const heading = this.querySelector('#cart-notification-heading');
-    if (heading && item) {
-      heading.textContent = item.product_title;
-      if (item.variant_title) {
-        heading.textContent += ` - ${item.variant_title}`;
-      }
-    }
+    document.body.addEventListener('click', this.onBodyClick);
 
-    // Update cart count badge
-    const countBadge = this.querySelector('.cart-notification__count');
-    if (countBadge && detail.cart) {
-      countBadge.textContent = `(${detail.cart.item_count})`;
-    }
-
-    // Update cart icon bubble if section is included
-    if (sections?.['cart-icon-bubble']) {
-      const cartIconBubble = document.getElementById('cart-icon-bubble');
-      if (cartIconBubble) {
-        const parsed = new DOMParser().parseFromString(
-          sections['cart-icon-bubble'],
-          'text/html'
-        );
-        const newBubble = parsed.querySelector('.shopify-section');
-        if (newBubble) {
-          cartIconBubble.innerHTML = newBubble.innerHTML;
-        }
-      }
-    }
-
-    this.show();
+    this.dispatchCartViewEvent();
   }
 
-  /**
-   * Show the notification.
-   */
-  show() {
-    if (!this.notification) return;
+  // The notification's outer element is server-rendered once at page load, so
+  // its `cart` Liquid object reflects the pre-add state. The morphed children
+  // (inserted from the /cart/add.js sections response in renderContents) are
+  // post-add, but they don't expose the full cart shape we need for the event
+  // payload. So we keep an explicit /cart.json fetch on open. Migrating to the
+  // factory + filter would require re-rendering the notification element
+  // itself in sections, which is out of scope for this PR.
+  async dispatchCartViewEvent() {
+    const { CartViewEvent } = window.StandardEvents || {};
+    if (!CartViewEvent) return;
 
-    // Clear any existing timer
-    this.clearAutoDismiss();
+    try {
+      const response = await fetch(`${routes.cart_url}.json`);
+      const cart = await response.json();
+      if (!cart?.currency) return;
 
-    // Show the notification
-    this.notification.removeAttribute('hidden');
-    this.classList.add('is-visible');
-
-    // Force reflow for animation
-    this.notification.offsetHeight;
-    this.classList.add('is-active');
-
-    // Set auto-dismiss timer
-    this.autoDismissTimer = setTimeout(() => {
-      this.close();
-    }, this.autoDismissDelay);
-
-    // Pause auto-dismiss on hover
-    this.addEventListener('mouseenter', this.pauseAutoDismiss);
-    this.addEventListener('mouseleave', this.resumeAutoDismiss);
+      this.dispatchEvent(
+        new CartViewEvent({
+          context: 'dialog',
+          cart: CartViewEvent.createCartFromAjaxResponse(cart),
+        })
+      );
+    } catch (e) {
+      // cart:view is informational; swallow fetch errors
+    }
   }
 
-  /**
-   * Close/hide the notification.
-   */
   close() {
-    if (!this.notification) return;
+    this.notification.classList.remove('active');
+    document.body.removeEventListener('click', this.onBodyClick);
 
-    this.clearAutoDismiss();
-
-    this.classList.remove('is-active');
-
-    // Wait for fade-out animation to complete
-    const handleTransitionEnd = () => {
-      this.classList.remove('is-visible');
-      this.notification.setAttribute('hidden', '');
-      this.removeEventListener('transitionend', handleTransitionEnd);
-    };
-
-    this.addEventListener('transitionend', handleTransitionEnd);
-
-    // Fallback in case transitionend doesn't fire
-    setTimeout(() => {
-      this.classList.remove('is-visible');
-      this.notification.setAttribute('hidden', '');
-    }, 300);
-
-    this.removeEventListener('mouseenter', this.pauseAutoDismiss);
-    this.removeEventListener('mouseleave', this.resumeAutoDismiss);
+    removeTrapFocus(this.activeElement);
   }
 
-  pauseAutoDismiss = () => {
-    this.clearAutoDismiss();
-  };
+  renderContents(parsedState) {
+    this.cartItemKey = parsedState.key;
+    this.getSectionsToRender().forEach((section) => {
+      document.getElementById(section.id).innerHTML = this.getSectionInnerHTML(
+        parsedState.sections[section.id],
+        section.selector
+      );
+    });
 
-  resumeAutoDismiss = () => {
-    this.autoDismissTimer = setTimeout(() => {
+    if (this.header) this.header.reveal();
+    this.open();
+  }
+
+  getSectionsToRender() {
+    return [
+      {
+        id: 'cart-notification-product',
+        selector: `[id="cart-notification-product-${this.cartItemKey}"]`,
+      },
+      {
+        id: 'cart-notification-button',
+      },
+      {
+        id: 'cart-icon-bubble',
+      },
+    ];
+  }
+
+  getSectionInnerHTML(html, selector = '.shopify-section') {
+    return new DOMParser().parseFromString(html, 'text/html').querySelector(selector).innerHTML;
+  }
+
+  handleBodyClick(evt) {
+    const target = evt.target;
+    if (target !== this.notification && !target.closest('cart-notification')) {
+      const disclosure = target.closest('details-disclosure, header-menu');
+      this.activeElement = disclosure ? disclosure.querySelector('summary') : null;
       this.close();
-    }, this.autoDismissDelay);
-  };
-
-  clearAutoDismiss() {
-    if (this.autoDismissTimer) {
-      clearTimeout(this.autoDismissTimer);
-      this.autoDismissTimer = null;
     }
+  }
+
+  setActiveElement(element) {
+    this.activeElement = element;
   }
 }
 

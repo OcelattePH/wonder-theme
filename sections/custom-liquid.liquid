@@ -1,27 +1,43 @@
-{% render 'section-padding' %}
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: calc({{ section.settings.padding_top }}px * 0.75);
+    padding-bottom: calc({{ section.settings.padding_bottom }}px  * 0.75);
+  }
 
-<div class="color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
-  <div class="page-width">
-    {{ section.settings.liquid }}
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="section-{{ section.id }}-padding">
+    {{ section.settings.custom_liquid }}
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "Custom Liquid",
+  "name": "t:sections.custom-liquid.name",
   "tag": "section",
-  "class": "section-custom-liquid",
+  "class": "section",
   "settings": [
     {
       "type": "liquid",
-      "id": "liquid",
-      "label": "Liquid code"
+      "id": "custom_liquid",
+      "label": "t:sections.custom-liquid.settings.custom_liquid.label",
+      "info": "t:sections.custom-liquid.settings.custom_liquid.info"
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "Color scheme",
+      "label": "t:sections.all.colors.label",
       "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
     },
     {
       "type": "range",
@@ -29,9 +45,9 @@
       "min": 0,
       "max": 100,
       "step": 4,
-      "default": 40,
       "unit": "px",
-      "label": "Top padding"
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
     },
     {
       "type": "range",
@@ -39,14 +55,14 @@
       "min": 0,
       "max": 100,
       "step": 4,
-      "default": 40,
       "unit": "px",
-      "label": "Bottom padding"
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 52
     }
   ],
   "presets": [
     {
-      "name": "Custom Liquid"
+      "name": "t:sections.custom-liquid.presets.name"
     }
   ]
 }
