@@ -1,0 +1,32 @@
+/* Slideshow-specific overrides beyond component-slider.css */
+.section-slideshow {
+  margin-top: 0;
+}
+
+.slideshow .slider-buttons {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.slideshow .slider-button {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.slideshow .slider-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #000;
+}
+
+.slideshow .slideshow__pagination-dot {
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.slideshow .slideshow__pagination-dot.is-active {
+  background: #fff;
+  border-color: #fff;
+}

@@ -1,0 +1,272 @@
+{% render 'section-padding' %}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .contact-form-section {
+    max-width: 650px;
+    margin: 0 auto;
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__heading {
+    margin: 0 0 2rem;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .contact-form__fields {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__field--full {
+    grid-column: 1 / -1;
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__input,
+  #shopify-section-{{ section.id }} .contact-form__textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: 1rem;
+    color: inherit;
+    appearance: none;
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__input:focus,
+  #shopify-section-{{ section.id }} .contact-form__textarea:focus {
+    outline: none;
+    border-color: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__textarea {
+    min-height: 150px;
+    resize: vertical;
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__submit {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 2rem;
+    border: none;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__submit:hover {
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__success {
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #2e7d32;
+    border-radius: 4px;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__errors {
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #c62828;
+    border-radius: 4px;
+    background-color: #ffebee;
+    color: #c62828;
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__errors ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1.25rem;
+  }
+
+  #shopify-section-{{ section.id }} .contact-form__errors li {
+    margin-bottom: 0.25rem;
+  }
+{%- endstyle -%}
+
+<div class="color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
+  <div class="page-width">
+    <div class="contact-form-section">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="contact-form__heading h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+
+      {%- form 'contact' -%}
+        {%- if form.posted_successfully? -%}
+          <div class="contact-form__success" role="status" tabindex="-1" autofocus>
+            <p>{{ 'templates.contact.form.post_success' | t | default: 'Thanks for contacting us. We will get back to you as soon as possible.' }}</p>
+          </div>
+        {%- endif -%}
+
+        {%- if form.errors -%}
+          <div class="contact-form__errors" role="alert">
+            <p><strong>{{ 'templates.contact.form.error_heading' | t | default: 'Please fix the following errors:' }}</strong></p>
+            <ul>
+              {%- for field in form.errors -%}
+                <li>
+                  {%- if field == 'form' -%}
+                    {{ form.errors.messages[field] }}
+                  {%- else -%}
+                    <a href="#ContactForm-{{ field }}--{{ section.id }}">
+                      {{ form.errors.translated_fields[field] }} {{ form.errors.messages[field] }}
+                    </a>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <div class="contact-form__fields">
+          <div class="contact-form__field">
+            <label class="contact-form__label" for="ContactForm-name--{{ section.id }}">
+              {{ 'templates.contact.form.name' | t | default: 'Name' }}
+            </label>
+            <input
+              class="contact-form__input"
+              type="text"
+              id="ContactForm-name--{{ section.id }}"
+              name="contact[{{ 'templates.contact.form.name' | t | default: 'Name' }}]"
+              value="{% if form.name %}{{ form.name }}{% endif %}"
+              placeholder="{{ 'templates.contact.form.name' | t | default: 'Name' }}"
+              autocomplete="name"
+            >
+          </div>
+
+          <div class="contact-form__field">
+            <label class="contact-form__label" for="ContactForm-email--{{ section.id }}">
+              {{ 'templates.contact.form.email' | t | default: 'Email' }} <span aria-hidden="true">*</span>
+            </label>
+            <input
+              class="contact-form__input"
+              type="email"
+              id="ContactForm-email--{{ section.id }}"
+              name="contact[email]"
+              value="{% if form.email %}{{ form.email }}{% endif %}"
+              placeholder="{{ 'templates.contact.form.email' | t | default: 'Email' }}"
+              autocomplete="email"
+              autocapitalize="off"
+              spellcheck="false"
+              required
+              {% if form.errors contains 'email' %}
+                aria-invalid="true"
+                aria-describedby="ContactForm-email-error--{{ section.id }}"
+              {% endif %}
+            >
+          </div>
+
+          <div class="contact-form__field">
+            <label class="contact-form__label" for="ContactForm-phone--{{ section.id }}">
+              {{ 'templates.contact.form.phone' | t | default: 'Phone number' }}
+            </label>
+            <input
+              class="contact-form__input"
+              type="tel"
+              id="ContactForm-phone--{{ section.id }}"
+              name="contact[{{ 'templates.contact.form.phone' | t | default: 'Phone number' }}]"
+              value="{% if form.phone %}{{ form.phone }}{% endif %}"
+              placeholder="{{ 'templates.contact.form.phone' | t | default: 'Phone number' }}"
+              autocomplete="tel"
+              pattern="[0-9\-\+\s\(\)]*"
+            >
+          </div>
+
+          <div class="contact-form__field contact-form__field--full">
+            <label class="contact-form__label" for="ContactForm-body--{{ section.id }}">
+              {{ 'templates.contact.form.comment' | t | default: 'Message' }}
+            </label>
+            <textarea
+              class="contact-form__textarea"
+              id="ContactForm-body--{{ section.id }}"
+              name="contact[{{ 'templates.contact.form.comment' | t | default: 'Message' }}]"
+              placeholder="{{ 'templates.contact.form.comment' | t | default: 'Message' }}"
+              rows="6"
+            >{% if form.body %}{{ form.body }}{% endif %}</textarea>
+          </div>
+
+          <div class="contact-form__field contact-form__field--full">
+            <button type="submit" class="contact-form__submit">
+              {{ 'templates.contact.form.send' | t | default: 'Send' }}
+            </button>
+          </div>
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Contact form",
+  "tag": "section",
+  "class": "section-contact-form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Contact form"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px",
+      "label": "Top padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px",
+      "label": "Bottom padding"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact form"
+    }
+  ]
+}
+{% endschema %}

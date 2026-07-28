@@ -1,0 +1,237 @@
+/*
+ * section-image-banner.css -- Image banner / hero section
+ */
+
+.banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: rgb(var(--color-foreground));
+}
+
+/* Height variants
+   ========================================================================== */
+
+.banner--small {
+  min-height: 28rem;
+}
+
+.banner--medium {
+  min-height: 42rem;
+}
+
+.banner--large {
+  min-height: 56rem;
+}
+
+@media screen and (min-width: 750px) {
+  .banner--small {
+    min-height: 32rem;
+  }
+
+  .banner--medium {
+    min-height: 52rem;
+  }
+
+  .banner--large {
+    min-height: 72rem;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .banner--small {
+    min-height: 38rem;
+  }
+
+  .banner--medium {
+    min-height: 56rem;
+  }
+
+  .banner--large {
+    min-height: 82rem;
+  }
+}
+
+/* Media (background image / video)
+   ========================================================================== */
+
+.banner__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.banner__media img,
+.banner__media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Dark overlay */
+.banner__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, var(--banner-overlay-opacity, 0.4));
+  z-index: 1;
+}
+
+.banner--no-overlay .banner__media::after {
+  display: none;
+}
+
+/* Content overlay
+   ========================================================================== */
+
+.banner__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+  max-width: 80rem;
+  width: 100%;
+  color: #fff;
+}
+
+/* Text alignment variants */
+.banner__content--left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.banner__content--right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* Vertical position */
+.banner--content-top {
+  align-items: flex-start;
+}
+
+.banner--content-bottom {
+  align-items: flex-end;
+}
+
+/* Heading
+   ========================================================================== */
+
+.banner__heading {
+  margin: 0 0 1.5rem;
+  font-size: calc(var(--font-heading-scale, 1) * 3rem);
+  line-height: 1.1;
+  word-break: break-word;
+}
+
+@media screen and (min-width: 750px) {
+  .banner__heading {
+    font-size: calc(var(--font-heading-scale, 1) * 4.8rem);
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .banner__heading {
+    font-size: calc(var(--font-heading-scale, 1) * 6rem);
+  }
+}
+
+/* Body text
+   ========================================================================== */
+
+.banner__text {
+  margin: 0 0 2rem;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  max-width: 60rem;
+  opacity: 0.9;
+}
+
+@media screen and (min-width: 750px) {
+  .banner__text {
+    font-size: 1.6rem;
+  }
+}
+
+/* Buttons
+   ========================================================================== */
+
+.banner__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.banner__content--left .banner__buttons {
+  justify-content: flex-start;
+}
+
+.banner__content--right .banner__buttons {
+  justify-content: flex-end;
+}
+
+.banner__button {
+  display: inline-flex;
+  align-items: center;
+  padding: 1.2rem 3rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--input-border-radius, 0);
+  cursor: pointer;
+  transition: opacity var(--duration-default) ease, transform var(--duration-short) ease;
+}
+
+.banner__button:hover {
+  opacity: 0.85;
+}
+
+.banner__button--primary {
+  color: rgb(var(--color-button-text));
+  background-color: rgb(var(--color-button));
+  border: none;
+}
+
+.banner__button--secondary {
+  color: #fff;
+  background-color: transparent;
+  border: 0.1rem solid #fff;
+}
+
+.banner__button--secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+}
+
+/* Adapt to section scheme
+   ========================================================================== */
+
+.banner--scheme-dark .banner__content {
+  color: #fff;
+}
+
+.banner--scheme-light .banner__content {
+  color: rgb(var(--color-foreground));
+}
+
+/* Responsive content padding
+   ========================================================================== */
+
+@media screen and (min-width: 750px) {
+  .banner__content {
+    padding: 5rem 4rem;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .banner__content {
+    padding: 6rem 5rem;
+  }
+}

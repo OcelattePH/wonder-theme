@@ -1,0 +1,372 @@
+{% render 'section-padding' %}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .image-with-text__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3.2rem;
+    align-items: center;
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .image-with-text__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__media-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.8rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .image-with-text__media-wrapper--left {
+      order: 0;
+    }
+
+    #shopify-section-{{ section.id }} .image-with-text__media-wrapper--right {
+      order: 1;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__media-wrapper--adapt {
+    aspect-ratio: auto;
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__media-wrapper--portrait {
+    aspect-ratio: 2 / 3;
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__media-wrapper--square {
+    aspect-ratio: 1;
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 30rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8e8e8;
+    border-radius: 0.8rem;
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__placeholder svg {
+    width: 40%;
+    height: 40%;
+    fill: #ccc;
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .image-with-text__content {
+      padding: 2rem;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__caption {
+    margin: 0;
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__heading {
+    margin: 0;
+    font-size: 2.8rem;
+    line-height: 1.2;
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__text {
+    margin: 0;
+    line-height: 1.7;
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__text p {
+    margin: 0 0 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .image-with-text__button {
+    align-self: flex-start;
+  }
+
+  #shopify-section-{{ section.id }} .button--primary {
+    display: inline-block;
+    padding: 1.2rem 3.2rem;
+    background: var(--color-button, #1a1a1a);
+    color: var(--color-button-text, #fff);
+    border: none;
+    border-radius: 0.4rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .button--primary:hover {
+    opacity: 0.85;
+  }
+
+  #shopify-section-{{ section.id }} .button--secondary {
+    display: inline-block;
+    padding: 1.2rem 3.2rem;
+    background: transparent;
+    color: var(--color-button, #1a1a1a);
+    border: 1px solid currentColor;
+    border-radius: 0.4rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .button--secondary:hover {
+    background: var(--color-button, #1a1a1a);
+    color: var(--color-button-text, #fff);
+  }
+
+  #shopify-section-{{ section.id }} .button--link {
+    display: inline-block;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+{%- endstyle -%}
+
+<div class="color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
+  <div class="page-width">
+    <div class="image-with-text__grid">
+      {%- comment -%} Image column {%- endcomment -%}
+      <div class="image-with-text__media-wrapper image-with-text__media-wrapper--{{ section.settings.desktop_image_placement }} image-with-text__media-wrapper--{{ section.settings.image_ratio }}">
+        {%- if section.settings.image != blank -%}
+          <img
+            class="image-with-text__image"
+            src="{{ section.settings.image | image_url: width: 1000 }}"
+            alt="{{ section.settings.image.alt | escape }}"
+            loading="lazy"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+            srcset="
+              {{ section.settings.image | image_url: width: 500 }} 500w,
+              {{ section.settings.image | image_url: width: 750 }} 750w,
+              {{ section.settings.image | image_url: width: 1000 }} 1000w
+            "
+            sizes="(max-width: 749px) 100vw, 50vw"
+          >
+        {%- else -%}
+          <div class="image-with-text__placeholder">
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Text column {%- endcomment -%}
+      <div class="image-with-text__content animate animate--slide-in">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'caption' -%}
+              {%- if block.settings.caption != blank -%}
+                <p class="image-with-text__caption" {{ block.shopify_attributes }}>
+                  {{ block.settings.caption | escape }}
+                </p>
+              {%- endif -%}
+
+            {%- when 'heading' -%}
+              {%- if block.settings.heading != blank -%}
+                <h2 class="image-with-text__heading" {{ block.shopify_attributes }}>
+                  {{ block.settings.heading }}
+                </h2>
+              {%- endif -%}
+
+            {%- when 'text' -%}
+              {%- if block.settings.text != blank -%}
+                <div class="image-with-text__text rte" {{ block.shopify_attributes }}>
+                  {{ block.settings.text }}
+                </div>
+              {%- endif -%}
+
+            {%- when 'button' -%}
+              {%- if block.settings.label != blank -%}
+                <div class="image-with-text__button" {{ block.shopify_attributes }}>
+                  <a
+                    {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %}
+                    class="button--{{ block.settings.style }}"
+                  >
+                    {{ block.settings.label | escape }}
+                  </a>
+                </div>
+              {%- endif -%}
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "square", "label": "Square" }
+      ],
+      "default": "adapt",
+      "label": "Image ratio"
+    },
+    {
+      "type": "select",
+      "id": "desktop_image_placement",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left",
+      "label": "Desktop image placement"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px",
+      "label": "Top padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px",
+      "label": "Bottom padding"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "Image with text",
+          "label": "Heading"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or provide a review.</p>",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "default": "Learn more",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Button link"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "options": [
+            { "value": "primary", "label": "Primary" },
+            { "value": "secondary", "label": "Secondary" },
+            { "value": "link", "label": "Link" }
+          ],
+          "default": "primary",
+          "label": "Button style"
+        }
+      ]
+    },
+    {
+      "type": "caption",
+      "name": "Caption",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "caption",
+          "default": "Our story",
+          "label": "Caption"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text",
+      "blocks": [
+        { "type": "heading" },
+        { "type": "text" },
+        { "type": "button" }
+      ]
+    }
+  ]
+}
+{% endschema %}

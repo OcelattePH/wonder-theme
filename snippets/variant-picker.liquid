@@ -1,0 +1,141 @@
+{% doc %}
+  Renders variant option selectors as pills (radio buttons) or dropdowns.
+
+  @param {product} product - The product object
+  @param {block} block - The section block (contains picker_type setting)
+  @param {string} product_form_id - The product form element ID
+{% enddoc %}
+
+{%- assign picker_type = block.settings.picker_type | default: 'pills' -%}
+
+{%- unless product.has_only_default_variant -%}
+  {%- if picker_type == 'pills' -%}
+    <variant-radios
+      class="variant-picker variant-picker--pills no-js-hidden"
+      data-section="{{ section.id }}"
+      data-url="{{ product.url }}"
+      data-update-url="true"
+      {{ block.shopify_attributes }}
+    >
+      {%- for option in product.options_with_values -%}
+        <fieldset class="variant-picker__option js product-form__input" name="{{ option.name }}">
+          <legend class="variant-picker__label">
+            {{ option.name }}:
+            <span class="variant-picker__label-value">{{ option.selected_value }}</span>
+          </legend>
+          <div class="variant-picker__options" role="radiogroup">
+            {%- for value in option.values -%}
+              {%- assign option_disabled = false -%}
+              {%- comment -%}
+                Check if this option value leads to any available variant.
+                For each variant, check if this value in this option position
+                matches while accounting for the other currently selected options.
+              {%- endcomment -%}
+              {%- assign variant_available = false -%}
+              {%- for variant in product.variants -%}
+                {%- if variant.options[forloop.parentloop.index0] == value -%}
+                  {%- if variant.available -%}
+                    {%- assign variant_available = true -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- unless variant_available -%}
+                {%- assign option_disabled = true -%}
+              {%- endunless -%}
+
+              <label
+                class="variant-picker__option-label{% if option_disabled %} variant-picker__option--soldout{% endif %}{% if option.selected_value == value %} variant-picker__option--selected{% endif %}"
+                for="Option-{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+              >
+                <input
+                  type="radio"
+                  class="variant-picker__radio visually-hidden"
+                  id="Option-{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                  name="{{ option.name }}"
+                  value="{{ value | escape }}"
+                  form="{{ product_form_id }}"
+                  {% if option.selected_value == value %}checked{% endif %}
+                  {% if option_disabled %}data-soldout="true"{% endif %}
+                >
+                <span class="variant-picker__option-value">{{ value }}</span>
+              </label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+      {%- endfor -%}
+
+      <script type="application/json">
+        {{ product.variants | json }}
+      </script>
+    </variant-radios>
+
+  {%- else -%}
+    <variant-selects
+      class="variant-picker variant-picker--dropdown no-js-hidden"
+      data-section="{{ section.id }}"
+      data-url="{{ product.url }}"
+      data-update-url="true"
+      {{ block.shopify_attributes }}
+    >
+      {%- for option in product.options_with_values -%}
+        <div class="variant-picker__option product-form__input">
+          <label class="variant-picker__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+            {{ option.name }}
+          </label>
+          <div class="select">
+            <select
+              id="Option-{{ section.id }}-{{ forloop.index0 }}"
+              class="variant-picker__select select__select"
+              name="options[{{ option.name | escape }}]"
+              form="{{ product_form_id }}"
+            >
+              {%- for value in option.values -%}
+                <option
+                  value="{{ value | escape }}"
+                  {% if option.selected_value == value %}selected="selected"{% endif %}
+                >
+                  {{ value }}
+                </option>
+              {%- endfor -%}
+            </select>
+            {% render 'icon-caret' %}
+          </div>
+        </div>
+      {%- endfor -%}
+
+      <script type="application/json">
+        {{ product.variants | json }}
+      </script>
+    </variant-selects>
+  {%- endif -%}
+{%- endunless -%}
+
+{%- comment -%} No-JS fallback: native select {%- endcomment -%}
+<noscript>
+  <div class="product-form__input">
+    <label class="variant-picker__label" for="Variants-{{ section.id }}">
+      {{ 'products.product.product_variants' | t }}
+    </label>
+    <div class="select">
+      <select
+        name="id"
+        id="Variants-{{ section.id }}"
+        form="{{ product_form_id }}"
+      >
+        {%- for variant in product.variants -%}
+          <option
+            value="{{ variant.id }}"
+            {% if variant == product.selected_or_first_available_variant %}selected="selected"{% endif %}
+            {% unless variant.available %}disabled{% endunless %}
+          >
+            {{ variant.title }}
+            {%- if variant.available == false %} - {{ 'products.product.sold_out' | t }}{% endif %}
+            - {{ variant.price | money }}
+          </option>
+        {%- endfor -%}
+      </select>
+      {% render 'icon-caret' %}
+    </div>
+  </div>
+</noscript>

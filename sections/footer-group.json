@@ -1,0 +1,21 @@
+{
+  "type": "footer",
+  "name": "t:sections.footer.name",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "links_1": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Quick links",
+            "menu": "footer"
+          }
+        }
+      },
+      "block_order": ["links_1"],
+      "settings": {}
+    }
+  },
+  "order": ["footer"]
+}

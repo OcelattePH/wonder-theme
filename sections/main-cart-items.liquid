@@ -1,0 +1,126 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
+
+<cart-items class="color-{{ section.settings.color_scheme }} gradient{% if cart == empty %} is-empty{% endif %}">
+  <div class="page-width section-{{ section.id }}-padding">
+    <div class="cart__warnings">
+      <h1 class="cart__heading h2">
+        {{ 'cart.title' | t }}
+        <span class="cart__heading-count">({{ cart.item_count }})</span>
+      </h1>
+
+      {%- if cart == empty -%}
+        <div class="cart__empty-state">
+          <p class="cart__empty-text">{{ 'cart.empty' | t }}</p>
+          <a href="{{ routes.all_products_collection_url }}" class="button">
+            {{ 'cart.continue_shopping' | t }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if cart != empty -%}
+      {% form 'cart', cart %}
+        <div class="cart__contents">
+          <div class="cart__items" id="main-cart-items" data-id="{{ section.id }}">
+            {%- comment -%} Cart table header (desktop) {%- endcomment -%}
+            <div class="cart__items-header js-contents hidden" id="cart-items">
+              <div class="cart__items-header-row">
+                <span class="caption-large">{{ 'cart.headings.product' | t }}</span>
+                <span class="caption-large cart__items-header-quantity medium-hide small-hide">
+                  {{ 'cart.headings.quantity' | t }}
+                </span>
+                <span class="caption-large cart__items-header-total right medium-hide small-hide">
+                  {{ 'cart.headings.total' | t }}
+                </span>
+              </div>
+            </div>
+
+            <div class="cart__items-list" role="list">
+              {%- for item in cart.items -%}
+                {% render 'cart-line-item', item: item, index: forloop.index, compact: false %}
+              {%- endfor -%}
+            </div>
+          </div>
+
+          <p class="visually-hidden" id="cart-live-region-text" aria-live="polite" role="status"></p>
+          <p class="visually-hidden" id="shopping-cart-line-item-status" aria-live="polite" aria-hidden="true" role="status">
+            {{ 'cart.status' | t }}
+          </p>
+        </div>
+      {% endform %}
+
+      <div class="cart__continue-shopping">
+        <a href="{{ routes.all_products_collection_url }}" class="link underlined-link">
+          {{ 'cart.continue_shopping' | t }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="cart__loading-overlay hidden">
+    <div class="cart__loading-overlay-spinner">
+      <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+        <circle class="spinner__path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+      </svg>
+    </div>
+  </div>
+</cart-items>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-items.name",
+  "tag": "section",
+  "class": "section",
+  "enabled_on": {
+    "templates": ["cart"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,35 @@
+{
+  "type": "header",
+  "name": "t:sections.header.name",
+  "sections": {
+    "marquee": {
+      "type": "scrolling-marquee",
+      "blocks": {
+        "text_1": {
+          "type": "text_item",
+          "settings": {
+            "text": "Free shipping on orders over $50",
+            "link": ""
+          }
+        },
+        "text_2": {
+          "type": "text_item",
+          "settings": {
+            "text": "Shop our bestsellers",
+            "link": "/collections/all"
+          }
+        }
+      },
+      "block_order": ["text_1", "text_2"],
+      "settings": {
+        "speed": 30,
+        "separator": " | "
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {}
+    }
+  },
+  "order": ["marquee", "header"]
+}

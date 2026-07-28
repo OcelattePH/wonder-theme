@@ -1,0 +1,163 @@
+{
+  "sections": {
+    "marquee": {
+      "type": "scrolling-marquee",
+      "settings": {}
+    },
+    "hero": {
+      "type": "hero-category-cards",
+      "blocks": {
+        "cat1": {
+          "type": "category",
+          "settings": {
+            "heading": "Shop",
+            "subheading": "Explore our collection",
+            "link_text": "Shop Now"
+          }
+        }
+      },
+      "block_order": ["cat1"],
+      "settings": {}
+    },
+    "brand_story": {
+      "type": "rich-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Welcome to Wonder"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {}
+        }
+      },
+      "block_order": ["heading", "text"],
+      "settings": {}
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Featured Products"
+      }
+    },
+    "image_text": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {}
+        },
+        "text": {
+          "type": "text",
+          "settings": {}
+        },
+        "button": {
+          "type": "button",
+          "settings": {}
+        }
+      },
+      "block_order": ["heading", "text", "button"],
+      "settings": {}
+    },
+    "badges": {
+      "type": "trust-badges",
+      "blocks": {
+        "badge1": {
+          "type": "icon_item",
+          "settings": {
+            "icon": "leaf",
+            "heading": "Natural Ingredients"
+          }
+        },
+        "badge2": {
+          "type": "icon_item",
+          "settings": {
+            "icon": "checkmark",
+            "heading": "Quality Tested"
+          }
+        },
+        "badge3": {
+          "type": "icon_item",
+          "settings": {
+            "icon": "heart",
+            "heading": "Cruelty Free"
+          }
+        },
+        "badge4": {
+          "type": "icon_item",
+          "settings": {
+            "icon": "recycle",
+            "heading": "Sustainable"
+          }
+        }
+      },
+      "block_order": ["badge1", "badge2", "badge3", "badge4"],
+      "settings": {}
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "quote1": {
+          "type": "quote",
+          "settings": {
+            "text": "<p>Absolutely love this product. The quality is outstanding and it arrived quickly.</p>",
+            "author": "Sarah M.",
+            "rating": 5
+          }
+        },
+        "quote2": {
+          "type": "quote",
+          "settings": {
+            "text": "<p>Best purchase I have made this year. Will definitely be ordering again soon.</p>",
+            "author": "James R.",
+            "rating": 5
+          }
+        },
+        "quote3": {
+          "type": "quote",
+          "settings": {
+            "text": "<p>Great customer service and the product exceeded my expectations in every way.</p>",
+            "author": "Emily T.",
+            "rating": 4
+          }
+        }
+      },
+      "block_order": ["quote1", "quote2", "quote3"],
+      "settings": {
+        "heading": "What Our Customers Say"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Subscribe to our newsletter"
+          }
+        },
+        "paragraph": {
+          "type": "paragraph",
+          "settings": {}
+        },
+        "email_form": {
+          "type": "email_form",
+          "settings": {}
+        }
+      },
+      "block_order": ["heading", "paragraph", "email_form"],
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "brand_story",
+    "featured",
+    "image_text",
+    "badges",
+    "testimonials",
+    "newsletter"
+  ]
+}

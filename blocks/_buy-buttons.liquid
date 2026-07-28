@@ -1,0 +1,28 @@
+{%- render 'buy-buttons',
+  block: block,
+  product: product,
+  product_form_id: product_form_id,
+  section_id: section.id,
+  show_pickup_availability: block.settings.show_pickup_availability
+-%}
+
+{% schema %}
+{
+  "name": "Buy buttons",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout buttons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pickup_availability",
+      "label": "Show pickup availability",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

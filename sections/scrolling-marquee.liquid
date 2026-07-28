@@ -1,0 +1,132 @@
+{{ 'component-marquee.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- if section.blocks.size > 0 -%}
+  <div
+    class="marquee color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-padding"
+    id="Marquee-{{ section.id }}"
+    role="marquee"
+    aria-label="{{ 'sections.scrolling-marquee.name' | t | default: 'Scrolling marquee' }}"
+  >
+    <div class="marquee__track" style="--marquee-speed: {{ section.settings.speed }}s;">
+      {%- comment -%} Repeat content 4x for seamless infinite scroll {%- endcomment -%}
+      {%- for i in (1..4) -%}
+        {%- for block in section.blocks -%}
+          <span class="marquee__item" {{ block.shopify_attributes }}>
+            {%- if block.settings.link != blank -%}
+              <a href="{{ block.settings.link }}" class="marquee__link">
+                {{ block.settings.text | escape }}
+              </a>
+            {%- else -%}
+              {{ block.settings.text | escape }}
+            {%- endif -%}
+          </span>
+          <span class="marquee__separator" aria-hidden="true">{{ section.settings.separator }}</span>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.scrolling-marquee.name",
+  "tag": "section",
+  "class": "section-marquee",
+  "settings": [
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "unit": "s",
+      "label": "t:sections.scrolling-marquee.settings.speed.label"
+    },
+    {
+      "type": "text",
+      "id": "separator",
+      "default": " | ",
+      "label": "t:sections.scrolling-marquee.settings.separator.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.scrolling-marquee.settings.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "default": 4,
+      "unit": "px",
+      "label": "t:sections.scrolling-marquee.settings.padding_top.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "default": 4,
+      "unit": "px",
+      "label": "t:sections.scrolling-marquee.settings.padding_bottom.label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text_item",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "default": "Announcement text",
+          "label": "t:sections.scrolling-marquee.settings.text.label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.scrolling-marquee.name",
+      "blocks": [
+        {
+          "type": "text_item",
+          "settings": {
+            "text": "Free shipping on orders over $50"
+          }
+        },
+        {
+          "type": "text_item",
+          "settings": {
+            "text": "Shop our bestsellers"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

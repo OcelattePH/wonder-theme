@@ -1,0 +1,128 @@
+{{ 'component-cart-drawer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
+
+<cart-drawer class="drawer{% if cart == empty %} is-empty{% endif %}">
+  <div id="CartDrawer" class="cart-drawer">
+    <div id="CartDrawer-Overlay" class="cart-drawer__overlay"></div>
+
+    <div
+      class="cart-drawer__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-label="{{ 'cart.title' | t }}"
+      tabindex="-1"
+    >
+      {%- comment -%} Drawer header {%- endcomment -%}
+      <div class="cart-drawer__header">
+        <h2 class="cart-drawer__heading h4" id="CartDrawer-Title">
+          {{ 'cart.title' | t }}
+          <span class="cart-drawer__count badge">({{ cart.item_count }})</span>
+        </h2>
+        <button
+          class="cart-drawer__close"
+          type="button"
+          aria-label="{{ 'accessibility.close' | t }}"
+          onclick="this.closest('cart-drawer').close()"
+        >
+          <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20">
+            <path d="M5.293 5.293a1 1 0 011.414 0L10 8.586l3.293-3.293a1 1 0 111.414 1.414L11.414 10l3.293 3.293a1 1 0 01-1.414 1.414L10 11.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586 10 5.293 6.707a1 1 0 010-1.414z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+
+      {%- comment -%} Empty state {%- endcomment -%}
+      <div class="cart-drawer__empty{% unless cart == empty %} hidden{% endunless %}" id="CartDrawer-Empty">
+        <div class="cart-drawer__empty-content">
+          <p class="cart-drawer__empty-text">{{ 'cart.empty' | t }}</p>
+          <a href="{{ routes.all_products_collection_url }}" class="button">
+            {{ 'cart.continue_shopping' | t }}
+          </a>
+          {%- if shop.customer_accounts_enabled -%}
+            <p class="cart-drawer__login caption">
+              {{ 'cart.login.title' | t }}
+              <a href="{{ routes.account_login_url }}" class="link underlined-link">
+                {{ 'cart.login.link' | t }}
+              </a>
+            </p>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Line items {%- endcomment -%}
+      <div class="cart-drawer__items{% if cart == empty %} hidden{% endif %}" id="CartDrawer-Items">
+        {%- for item in cart.items -%}
+          <div class="cart-drawer__item" id="CartDrawer-Item-{{ forloop.index }}">
+            {% render 'cart-line-item', item: item, index: forloop.index, compact: true %}
+
+            <cart-remove-button
+              id="CartDrawerRemove-{{ forloop.index }}"
+              data-index="{{ forloop.index }}"
+            >
+              <a
+                href="{{ item.url_to_remove }}"
+                class="cart-drawer__remove link caption underlined-link"
+                aria-label="{{ 'cart.remove' | t: title: item.product.title }}"
+              >
+                {{ 'cart.remove' | t }}
+              </a>
+            </cart-remove-button>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} Drawer footer {%- endcomment -%}
+      <div class="cart-drawer__footer{% if cart == empty %} hidden{% endif %}" id="CartDrawer-Footer">
+        {%- if cart.cart_level_discount_applications.size > 0 -%}
+          <ul class="cart-drawer__discounts list-unstyled" role="list">
+            {%- for discount in cart.cart_level_discount_applications -%}
+              <li class="cart-drawer__discount caption">
+                <svg aria-hidden="true" focusable="false" width="12" height="12" viewBox="0 0 12 12">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M7 0h5v5L7.146 9.854a.5.5 0 01-.708 0L2.146 5.561a.5.5 0 010-.707L7 0zm4 1a1 1 0 100 2 1 1 0 000-2z" fill="currentColor"/>
+                </svg>
+                {{ discount.title }} (-{{ discount.total_allocated_amount | money }})
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        <div class="cart-drawer__subtotal">
+          <span>{{ 'cart.subtotal' | t }}</span>
+          <span class="cart-drawer__subtotal-price">{{ cart.total_price | money_with_currency }}</span>
+        </div>
+
+        <small class="cart-drawer__tax-note caption rte">
+          {{ 'cart.taxes_and_shipping_at_checkout' | t }}
+        </small>
+
+        <div class="cart-drawer__ctas">
+          <a href="{{ routes.cart_url }}" class="cart-drawer__view-cart button button--secondary">
+            {{ 'cart.view_cart' | t }}
+          </a>
+          <button
+            type="submit"
+            name="checkout"
+            class="cart-drawer__checkout button"
+            form="CartDrawer-Form"
+            {% if cart == empty %}disabled{% endif %}
+          >
+            {{ 'cart.checkout' | t }}
+          </button>
+        </div>
+      </div>
+
+      {%- comment -%} Hidden form for checkout submission {%- endcomment -%}
+      {% form 'cart', cart, id: 'CartDrawer-Form' %}
+        <input type="hidden" name="checkout" value="">
+      {% endform %}
+
+      {%- comment -%} Loading overlay {%- endcomment -%}
+      <div class="cart-drawer__loading hidden" id="CartDrawer-Loading">
+        <div class="cart-drawer__spinner">
+          <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+            <circle class="spinner__path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</cart-drawer>

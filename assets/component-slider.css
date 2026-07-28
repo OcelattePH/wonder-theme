@@ -1,0 +1,268 @@
+/*
+ * component-slider.css -- Slider / slideshow / carousel
+ */
+
+/* Wrapper
+   ========================================================================== */
+
+.slider-component {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Slider track
+   ========================================================================== */
+
+.slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: 1rem;
+}
+
+.slider::-webkit-scrollbar {
+  display: none;
+}
+
+/* Slides
+   ========================================================================== */
+
+.slider__slide {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+.slider__slide--full {
+  width: 100%;
+}
+
+.slider__slide--half {
+  width: calc(50% - 0.5rem);
+}
+
+.slider__slide--third {
+  width: calc(33.333% - 0.667rem);
+}
+
+.slider__slide--quarter {
+  width: calc(25% - 0.75rem);
+}
+
+@media screen and (max-width: 749px) {
+  .slider__slide--half,
+  .slider__slide--third,
+  .slider__slide--quarter {
+    width: 80%;
+  }
+}
+
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .slider__slide--third,
+  .slider__slide--quarter {
+    width: calc(50% - 0.5rem);
+  }
+}
+
+/* Navigation controls
+   ========================================================================== */
+
+.slider__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.slider__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  padding: 0;
+  color: rgb(var(--color-foreground));
+  background-color: rgb(var(--color-background));
+  border: 0.1rem solid rgba(var(--color-foreground), 0.15);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color var(--duration-default) ease,
+    color var(--duration-default) ease,
+    opacity var(--duration-default) ease;
+}
+
+.slider__button:hover {
+  background-color: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+.slider__button[disabled] {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.slider__button svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.slider__button--prev svg {
+  transform: rotate(180deg);
+}
+
+/* Floating arrow buttons (overlaid on slider) */
+.slider__button--floating {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.1);
+}
+
+.slider__button--floating.slider__button--prev {
+  left: 1rem;
+}
+
+.slider__button--floating.slider__button--next {
+  right: 1rem;
+}
+
+@media screen and (max-width: 749px) {
+  .slider__button--floating {
+    width: 3.6rem;
+    height: 3.6rem;
+  }
+}
+
+/* Page counter
+   ========================================================================== */
+
+.slider__counter {
+  font-size: 1.3rem;
+  color: rgba(var(--color-foreground), 0.6);
+  white-space: nowrap;
+  min-width: 4rem;
+  text-align: center;
+}
+
+/* Dot indicators
+   ========================================================================== */
+
+.slider__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.slider__dot {
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(var(--color-foreground), 0.2);
+  cursor: pointer;
+  transition: background-color var(--duration-default) ease,
+    transform var(--duration-default) ease;
+}
+
+.slider__dot:hover {
+  background-color: rgba(var(--color-foreground), 0.4);
+}
+
+.slider__dot--active {
+  background-color: rgb(var(--color-foreground));
+  transform: scale(1.2);
+}
+
+/* Slideshow autoplay button
+   ========================================================================== */
+
+.slideshow__autoplay {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  padding: 0;
+  color: rgb(var(--color-foreground));
+  background: none;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.15);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color var(--duration-default) ease,
+    color var(--duration-default) ease;
+}
+
+.slideshow__autoplay:hover {
+  background-color: rgba(var(--color-foreground), 0.06);
+}
+
+.slideshow__autoplay svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+/* Hide pause icon by default, show when playing */
+.slideshow__autoplay .icon-pause {
+  display: none;
+}
+
+.slideshow__autoplay[data-playing='true'] .icon-play {
+  display: none;
+}
+
+.slideshow__autoplay[data-playing='true'] .icon-pause {
+  display: block;
+}
+
+/* Slideshow progress bar (optional) */
+.slideshow__progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 0.3rem;
+  background-color: rgb(var(--color-foreground));
+  transition: width linear;
+  z-index: 2;
+}
+
+/* Scroll indicator fade on edges
+   ========================================================================== */
+
+.slider-component--fade-edges .slider::before,
+.slider-component--fade-edges .slider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4rem;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.slider-component--fade-edges .slider::before {
+  left: 0;
+  background: linear-gradient(to right, rgb(var(--color-background)), transparent);
+}
+
+.slider-component--fade-edges .slider::after {
+  right: 0;
+  background: linear-gradient(to left, rgb(var(--color-background)), transparent);
+}
+
+/* Reduced motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .slider {
+    scroll-behavior: auto;
+  }
+}

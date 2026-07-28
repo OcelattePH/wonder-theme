@@ -1,0 +1,29 @@
+{%- if block.settings.collection != blank -%}
+  {%- render 'card-collection',
+    collection: block.settings.collection,
+    media_aspect_ratio: 'adapt'
+  -%}
+{%- else -%}
+  <div class="card-collection card-collection--placeholder" {{ block.shopify_attributes }}>
+    <div class="card-collection__media">
+      {{ 'collection-1' | placeholder_svg_tag: 'placeholder' }}
+    </div>
+    <div class="card-collection__info">
+      <h3>{{ 'onboarding.collection_title' | t }}</h3>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Collection card",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    }
+  ]
+}
+{% endschema %}

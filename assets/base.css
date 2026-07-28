@@ -1,0 +1,1153 @@
+/* ==========================================================================
+   Wonder Theme — base.css
+   Main blocking stylesheet loaded in <head>.
+   Custom property values are injected by css-variables.liquid;
+   the fallbacks here keep the page usable before that snippet runs.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. CSS Reset
+   -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  transition: color var(--duration-default) ease,
+              background-color var(--duration-default) ease,
+              border-color var(--duration-default) ease,
+              opacity var(--duration-default) ease;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. CSS Custom Properties (fallbacks)
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Typography */
+  --font-body-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body-style: normal;
+  --font-body-weight: 400;
+  --font-body-weight-bold: 700;
+  --font-heading-family: var(--font-body-family);
+  --font-heading-style: normal;
+  --font-heading-weight: 700;
+
+  /* Font scale — multipliers applied per heading level */
+  --font-size-base: 1.6rem;
+  --font-scale: 1.2;
+
+  /* Colors stored as bare channels for easy alpha composition */
+  --color-foreground: 18, 18, 18;
+  --color-background: 255, 255, 255;
+  --color-border: 18, 18, 18;
+  --color-button: 18, 18, 18;
+  --color-button-text: 255, 255, 255;
+  --color-shadow: 18, 18, 18;
+  --color-link: 18, 18, 18;
+  --color-badge-foreground: 255, 255, 255;
+  --color-badge-background: 18, 18, 18;
+
+  /* Layout */
+  --page-width: 120rem;
+  --page-width-narrow: 76rem;
+  --grid-desktop-horizontal-spacing: 2rem;
+  --grid-desktop-vertical-spacing: 2rem;
+  --grid-mobile-horizontal-spacing: 1.2rem;
+  --grid-mobile-vertical-spacing: 1.2rem;
+
+  /* Motion */
+  --duration-short: 100ms;
+  --duration-default: 200ms;
+  --duration-long: 500ms;
+  --duration-extra-long: 600ms;
+  --ease-out-slow: cubic-bezier(0, 0, 0.3, 1);
+
+  /* Buttons */
+  --buttons-radius: 0px;
+  --buttons-border-width: 1px;
+  --buttons-border-opacity: 1;
+  --buttons-shadow-opacity: 0;
+  --buttons-shadow-offset-x: 0;
+  --buttons-shadow-offset-y: 4px;
+
+  /* Inputs */
+  --inputs-radius: 0px;
+  --inputs-border-width: 1px;
+  --inputs-border-opacity: 0.55;
+  --inputs-shadow-opacity: 0;
+  --inputs-shadow-offset-x: 0;
+  --inputs-shadow-offset-y: 4px;
+
+  /* Cards */
+  --card-corner-radius: 0px;
+  --card-border-width: 0px;
+  --card-border-color: rgba(var(--color-foreground), 0.1);
+  --card-shadow-opacity: 0;
+  --card-shadow-offset-x: 0;
+  --card-shadow-offset-y: 4px;
+  --card-image-padding: 0;
+  --card-text-alignment: start;
+
+  /* Badges */
+  --badge-corner-radius: 4rem;
+  --badge-position: 1rem;
+
+  /* Media */
+  --media-padding: 0;
+  --media-border-opacity: 0.05;
+  --media-border-width: 1px;
+  --media-radius: 0px;
+  --media-shadow-opacity: 0;
+}
+
+html {
+  font-size: 62.5%; /* 1rem = 10px convenience scale */
+}
+
+body {
+  font-size: var(--font-size-base);
+  font-family: var(--font-body-family);
+  font-style: var(--font-body-style);
+  font-weight: var(--font-body-weight);
+  color: rgb(var(--color-foreground));
+  background-color: rgb(var(--color-background));
+}
+
+
+/* --------------------------------------------------------------------------
+   3. Typography Scale
+   -------------------------------------------------------------------------- */
+
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6,
+.h0 {
+  font-family: var(--font-heading-family);
+  font-style: var(--font-heading-style);
+  font-weight: var(--font-heading-weight);
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  color: rgb(var(--color-foreground));
+  word-break: break-word;
+}
+
+.h0 {
+  font-size: calc(var(--font-size-base) * var(--font-scale) * var(--font-scale) * var(--font-scale) * var(--font-scale) * var(--font-scale) * var(--font-scale));
+}
+
+h1, .h1 {
+  font-size: calc(var(--font-size-base) * var(--font-scale) * var(--font-scale) * var(--font-scale) * var(--font-scale) * var(--font-scale));
+}
+
+h2, .h2 {
+  font-size: calc(var(--font-size-base) * var(--font-scale) * var(--font-scale) * var(--font-scale) * var(--font-scale));
+}
+
+h3, .h3 {
+  font-size: calc(var(--font-size-base) * var(--font-scale) * var(--font-scale) * var(--font-scale));
+}
+
+h4, .h4 {
+  font-size: calc(var(--font-size-base) * var(--font-scale) * var(--font-scale));
+}
+
+h5, .h5 {
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+}
+
+h6, .h6 {
+  font-size: var(--font-size-base);
+}
+
+p {
+  margin-block-end: 1.2em;
+}
+
+p:last-child {
+  margin-block-end: 0;
+}
+
+.caption {
+  font-size: calc(var(--font-size-base) * 0.8);
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+
+.subtitle {
+  font-size: calc(var(--font-size-base) * 0.9);
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+
+/* --------------------------------------------------------------------------
+   4. Color Scheme Classes
+   Values injected by css-variables.liquid; structure lives here.
+   -------------------------------------------------------------------------- */
+
+.color-scheme-1,
+.color-scheme-2,
+.color-scheme-3,
+.color-scheme-4,
+.color-scheme-5 {
+  color: rgb(var(--color-foreground));
+  background-color: rgb(var(--color-background));
+}
+
+/* Per-scheme custom props are set inline via css-variables.liquid, e.g.:
+   .color-scheme-1 { --color-foreground: ...; --color-background: ...; }
+   The cascade applies automatically.                                      */
+
+[class*="color-scheme-"] {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+/* --------------------------------------------------------------------------
+   5. Layout Primitives
+   -------------------------------------------------------------------------- */
+
+.page-width {
+  max-width: var(--page-width);
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.page-width--narrow {
+  max-width: var(--page-width-narrow);
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@media screen and (min-width: 750px) {
+  .page-width,
+  .page-width--narrow {
+    padding-inline: 5rem;
+  }
+}
+
+.content-for-layout {
+  padding-block-start: var(--spacing-sections-desktop, 3.6rem);
+  padding-block-end: var(--spacing-sections-desktop, 3.6rem);
+}
+
+/* ---- Grid ---- */
+
+.grid {
+  display: grid;
+  gap: var(--grid-mobile-vertical-spacing) var(--grid-mobile-horizontal-spacing);
+}
+
+@media screen and (min-width: 750px) {
+  .grid {
+    gap: var(--grid-desktop-vertical-spacing) var(--grid-desktop-horizontal-spacing);
+  }
+}
+
+.grid--2-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid--3-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid--4-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media screen and (min-width: 750px) {
+  .grid--3-col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .grid--4-col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .grid--4-col {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.grid--1-col-mobile {
+  grid-template-columns: 1fr;
+}
+
+@media screen and (min-width: 750px) {
+  .grid--1-col-mobile.grid--2-col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid--1-col-mobile.grid--3-col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .grid--1-col-mobile.grid--4-col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .grid--1-col-mobile.grid--4-col {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   6. Button Styles
+   -------------------------------------------------------------------------- */
+
+.button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  min-height: 4.8rem;
+  padding: 1.2rem 3rem;
+  border: var(--buttons-border-width) solid transparent;
+  border-radius: var(--buttons-radius);
+  font-family: inherit;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: opacity var(--duration-default) ease, background-color var(--duration-default) ease, color var(--duration-default) ease, border-color var(--duration-default) ease, box-shadow var(--duration-default) ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  box-shadow: var(--buttons-shadow-offset-x) var(--buttons-shadow-offset-y) 0
+    rgba(var(--color-shadow), var(--buttons-shadow-opacity));
+}
+
+.button:hover {
+  opacity: 0.85;
+}
+
+.button:focus-visible {
+  outline: 2px solid rgb(var(--color-foreground));
+  outline-offset: 3px;
+}
+
+.button[disabled],
+.button[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Secondary */
+.button--secondary {
+  background-color: transparent;
+  color: rgb(var(--color-button));
+  border-color: rgba(var(--color-button), var(--buttons-border-opacity));
+}
+
+.button--secondary:hover {
+  background-color: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  opacity: 1;
+}
+
+/* Tertiary */
+.button--tertiary {
+  background-color: transparent;
+  border: none;
+  color: rgb(var(--color-link, var(--color-foreground)));
+  padding: 0.8rem 0;
+  min-height: auto;
+  text-transform: none;
+  font-weight: var(--font-body-weight);
+  letter-spacing: normal;
+  text-decoration: underline;
+  text-underline-offset: 0.4rem;
+}
+
+.button--tertiary:hover {
+  opacity: 0.7;
+}
+
+/* Full-width */
+.button--full-width {
+  width: 100%;
+}
+
+/* Small */
+.button--small {
+  min-height: 3.6rem;
+  padding: 0.8rem 2rem;
+  font-size: 1.3rem;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. Form Elements
+   -------------------------------------------------------------------------- */
+
+input,
+select,
+textarea {
+  font-size: 1.6rem;
+  color: rgb(var(--color-foreground));
+  background-color: rgb(var(--color-background));
+  border: var(--inputs-border-width) solid rgba(var(--color-foreground), var(--inputs-border-opacity));
+  border-radius: var(--inputs-radius);
+  padding: 1.2rem 1.6rem;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color var(--duration-default) ease,
+              box-shadow var(--duration-default) ease;
+  box-shadow: var(--inputs-shadow-offset-x) var(--inputs-shadow-offset-y) 0
+    rgba(var(--color-shadow), var(--inputs-shadow-opacity));
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: rgb(var(--color-foreground));
+  box-shadow: 0 0 0 1px rgb(var(--color-foreground));
+}
+
+textarea {
+  resize: vertical;
+  min-height: 10rem;
+}
+
+label {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin-block-end: 0.6rem;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+/* Field wrapper with floating label */
+.field {
+  position: relative;
+}
+
+.field input,
+.field textarea,
+.field select {
+  padding-block-start: 2rem;
+  padding-block-end: 0.8rem;
+}
+
+.field label {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 1.6rem;
+  transform: translateY(-50%);
+  margin: 0;
+  pointer-events: none;
+  transition: transform var(--duration-default) ease,
+              font-size var(--duration-default) ease;
+  transform-origin: 0 0;
+}
+
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label,
+.field textarea:focus + label,
+.field textarea:not(:placeholder-shown) + label,
+.field select:focus + label,
+.field select:not([value='']) + label {
+  transform: translateY(-160%) scale(0.8);
+}
+
+/* textarea label positioning */
+.field textarea + label {
+  inset-block-start: 2rem;
+  transform: translateY(0);
+}
+
+.field textarea:focus + label,
+.field textarea:not(:placeholder-shown) + label {
+  transform: translateY(-60%) scale(0.8);
+}
+
+/* Form message */
+.form__message {
+  font-size: 1.3rem;
+  margin-block-start: 0.6rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.form__message--error {
+  color: #cc1c1c;
+}
+
+.form__message[aria-live='polite'] {
+  min-height: 2rem;
+}
+
+/* Select wrapper */
+.select {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.select select {
+  padding-inline-end: 4rem;
+}
+
+.select::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: 1.6rem;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-inline-start: 5px solid transparent;
+  border-inline-end: 5px solid transparent;
+  border-block-start: 6px solid rgb(var(--color-foreground));
+  pointer-events: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   8. Card Base
+   -------------------------------------------------------------------------- */
+
+.card {
+  position: relative;
+  border-radius: var(--card-corner-radius);
+  border: var(--card-border-width) solid var(--card-border-color);
+  overflow: hidden;
+  text-align: var(--card-text-alignment);
+  background-color: rgb(var(--color-background));
+  box-shadow: var(--card-shadow-offset-x) var(--card-shadow-offset-y) 0
+    rgba(var(--color-shadow), var(--card-shadow-opacity));
+}
+
+.card__inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card__media {
+  position: relative;
+  overflow: hidden;
+}
+
+.card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card__media[data-aspect-ratio] {
+  aspect-ratio: var(--aspect-ratio, auto);
+}
+
+.card__content {
+  padding: 1.6rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card__heading {
+  font-family: var(--font-heading-family);
+  font-weight: var(--font-heading-weight);
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+  line-height: 1.3;
+  margin-block-end: 0.4rem;
+}
+
+.card__heading a {
+  text-decoration: none;
+}
+
+.card__heading a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.card__information {
+  font-size: 1.4rem;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+
+/* --------------------------------------------------------------------------
+   9. Badge
+   -------------------------------------------------------------------------- */
+
+.badge {
+  position: absolute;
+  inset-block-start: var(--badge-position);
+  inset-inline-start: var(--badge-position);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 1rem;
+  border-radius: var(--badge-corner-radius);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  color: rgb(var(--color-badge-foreground));
+  background-color: rgb(var(--color-badge-background));
+}
+
+.badge--sale {
+  --color-badge-foreground: 255, 255, 255;
+  --color-badge-background: 200, 50, 50;
+}
+
+.badge--soldout {
+  --color-badge-foreground: 255, 255, 255;
+  --color-badge-background: 100, 100, 100;
+}
+
+.badge--percentage {
+  --color-badge-foreground: 255, 255, 255;
+  --color-badge-background: 200, 50, 50;
+  font-weight: 700;
+}
+
+
+/* --------------------------------------------------------------------------
+   10. Section Spacing
+   -------------------------------------------------------------------------- */
+
+.section-padding {
+  padding-block-start: var(--padding-top, 3.6rem);
+  padding-block-end: var(--padding-bottom, 3.6rem);
+}
+
+@media screen and (max-width: 749px) {
+  .section-padding {
+    padding-block-start: calc(var(--padding-top, 3.6rem) * 0.6);
+    padding-block-end: calc(var(--padding-bottom, 3.6rem) * 0.6);
+  }
+}
+
+.section-template--padding {
+  padding-block: 2.7rem;
+}
+
+@media screen and (min-width: 750px) {
+  .section-template--padding {
+    padding-block: 3.6rem;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   11. Accessibility
+   -------------------------------------------------------------------------- */
+
+.skip-to-content-link {
+  position: absolute;
+  inset-block-start: -10rem;
+  inset-inline-start: 1rem;
+  z-index: 9999;
+  padding: 1.2rem 2rem;
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  font-size: 1.4rem;
+  text-decoration: none;
+  border: 2px solid rgb(var(--color-foreground));
+  border-radius: var(--buttons-radius);
+}
+
+.skip-to-content-link:focus {
+  inset-block-start: 1rem;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.focus-none:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--color-foreground));
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   12. Utility Classes
+   -------------------------------------------------------------------------- */
+
+.hidden {
+  display: none !important;
+}
+
+@media screen and (max-width: 749px) {
+  .small-hide {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .medium-hide {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .large-up-hide {
+    display: none !important;
+  }
+}
+
+.left {
+  text-align: start;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: end;
+}
+
+.full-width {
+  width: 100vw;
+  position: relative;
+  inset-inline-start: 50%;
+  margin-inline-start: -50vw;
+}
+
+.list-unstyled {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(var(--color-background), 0.7);
+  z-index: 3;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--duration-default) ease,
+              visibility var(--duration-default) ease;
+}
+
+.loading-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.loading-overlay__spinner {
+  width: 3.6rem;
+  height: 3.6rem;
+  border: 3px solid rgba(var(--color-foreground), 0.15);
+  border-block-start-color: rgb(var(--color-foreground));
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Color utility classes (mapped by section settings) */
+.color-1 { color: rgb(var(--color-foreground)); background-color: rgb(var(--color-background)); }
+.color-2 { color: rgb(var(--color-foreground)); background-color: rgb(var(--color-background)); }
+.color-3 { color: rgb(var(--color-foreground)); background-color: rgb(var(--color-background)); }
+.color-4 { color: rgb(var(--color-foreground)); background-color: rgb(var(--color-background)); }
+.color-5 { color: rgb(var(--color-foreground)); background-color: rgb(var(--color-background)); }
+
+
+/* --------------------------------------------------------------------------
+   13. Media Queries (breakpoint reference)
+   Small:  max-width 749px
+   Medium: 750px - 989px
+   Large:  990px+
+   Applied inline throughout the file via @media blocks.
+   -------------------------------------------------------------------------- */
+
+
+/* --------------------------------------------------------------------------
+   14. Animations
+   -------------------------------------------------------------------------- */
+
+.animate {
+  opacity: 0;
+  transform: translateY(2rem);
+  transition: opacity var(--duration-long) var(--ease-out-slow),
+              transform var(--duration-long) var(--ease-out-slow);
+}
+
+.animate.animate--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate--slide-in {
+  animation: slideIn var(--duration-long) var(--ease-out-slow) forwards;
+}
+
+.animate--fade-in {
+  transform: none;
+  animation: fadeIn var(--duration-long) var(--ease-out-slow) forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(3rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .animate--slide-in,
+  .animate--fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   15. Component Base Classes
+   Minimal structure here; full styles live in component CSS files.
+   -------------------------------------------------------------------------- */
+
+/* Slider */
+.slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.slider::-webkit-scrollbar {
+  display: none;
+}
+
+.slider__slide {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* Disclosure */
+.disclosure {
+  position: relative;
+}
+
+.disclosure__list {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline-start: 0;
+  z-index: 10;
+  background-color: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), 0.1);
+  min-width: 20rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-0.4rem);
+  transition: opacity var(--duration-default) ease,
+              visibility var(--duration-default) ease,
+              transform var(--duration-default) ease;
+}
+
+.disclosure[open] .disclosure__list,
+.disclosure.is-open .disclosure__list {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--duration-default) ease,
+              visibility var(--duration-default) ease;
+}
+
+.modal.is-open,
+.modal[open] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal__inner {
+  position: relative;
+  max-width: 60rem;
+  max-height: 90vh;
+  width: 90%;
+  overflow-y: auto;
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+/* Drawer */
+.drawer {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: 1000;
+  width: min(40rem, 90vw);
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform var(--duration-long) var(--ease-out-slow);
+}
+
+[dir='rtl'] .drawer {
+  transform: translateX(-100%);
+}
+
+.drawer.is-open {
+  transform: translateX(0);
+}
+
+.drawer__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--duration-default) ease,
+              visibility var(--duration-default) ease;
+}
+
+.drawer__overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* --------------------------------------------------------------------------
+   16. Skeleton Loaders
+   -------------------------------------------------------------------------- */
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(var(--color-foreground), 0.06);
+  border-radius: var(--card-corner-radius);
+}
+
+.skeleton--text {
+  height: 1.4rem;
+  width: 80%;
+  margin-bottom: 0.8rem;
+  border-radius: 0.4rem;
+}
+
+.skeleton--text:last-child {
+  width: 60%;
+}
+
+.skeleton--heading {
+  height: 2.4rem;
+  width: 50%;
+  margin-bottom: 1.2rem;
+}
+
+.skeleton--image {
+  width: 100%;
+  padding-bottom: 100%;
+}
+
+.skeleton--button {
+  height: 4.6rem;
+  width: 100%;
+  border-radius: var(--button-border-radius);
+}
+
+.skeleton--price {
+  height: 2rem;
+  width: 6rem;
+}
+
+.skeleton--badge {
+  height: 2rem;
+  width: 5rem;
+  border-radius: 2rem;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--color-foreground), 0.04) 40%,
+    rgba(var(--color-foreground), 0.08) 50%,
+    rgba(var(--color-foreground), 0.04) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation: none;
+  }
+}
+
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeleton-card__media {
+  aspect-ratio: 1;
+  background: rgba(var(--color-foreground), 0.06);
+  border-radius: var(--card-corner-radius);
+}
+
+.skeleton-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0 0.4rem;
+}

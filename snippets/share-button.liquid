@@ -1,0 +1,30 @@
+{% doc %}
+  Share button using Web Share API with clipboard fallback.
+  @param {string} share_link - The URL to share
+  @param {block} block - The block object (for shopify_attributes)
+{% enddoc %}
+
+<share-button class="share-button" data-url="{{ share_link }}">
+  <button class="share-button__button button--tertiary" type="button">
+    {% render 'icon-share' %}
+    {{ 'general.share.share' | t }}
+  </button>
+  <div class="share-button__panel hidden" id="SharePanel-{{ block.id }}">
+    <div class="field">
+      <input
+        type="text"
+        class="field__input"
+        id="ShareUrl-{{ block.id }}"
+        value="{{ share_link }}"
+        readonly
+        onclick="this.select();"
+      >
+      <label class="field__label" for="ShareUrl-{{ block.id }}">
+        {{ 'general.share.share_url' | t }}
+      </label>
+    </div>
+    <button class="share-button__copy button button--small" type="button">
+      {{ 'general.share.copy_to_clipboard' | t }}
+    </button>
+  </div>
+</share-button>

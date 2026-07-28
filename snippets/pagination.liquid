@@ -1,0 +1,82 @@
+{% doc %}
+  Renders pagination controls for paginated collections or search results.
+
+  @param {paginate} paginate - Shopify paginate object (required)
+  @param {string} anchor - Optional anchor ID for scroll position after navigation
+{% enddoc %}
+
+{%- if paginate.pages > 1 -%}
+  {%- liquid
+    assign anchor_tag = ''
+    if anchor != blank
+      assign anchor_tag = '#' | append: anchor
+    endif
+  -%}
+
+  <nav class="pagination" role="navigation" aria-label="Pagination">
+    <ul class="pagination__list list-unstyled" role="list">
+      {%- comment -%} Previous button {%- endcomment -%}
+      <li class="pagination__item">
+        {%- if paginate.previous -%}
+          <a
+            href="{{ paginate.previous.url }}{{ anchor_tag }}"
+            class="pagination__link pagination__link--prev"
+            aria-label="Previous page"
+          >
+            {%- render 'icon-caret' -%}
+            <span>Previous</span>
+          </a>
+        {%- else -%}
+          <span class="pagination__link pagination__link--prev pagination__link--disabled" aria-disabled="true">
+            {%- render 'icon-caret' -%}
+            <span>Previous</span>
+          </span>
+        {%- endif -%}
+      </li>
+
+      {%- comment -%} Page number links {%- endcomment -%}
+      {%- for part in paginate.parts -%}
+        <li class="pagination__item">
+          {%- if part.is_link -%}
+            <a
+              href="{{ part.url }}{{ anchor_tag }}"
+              class="pagination__link pagination__link--number"
+              aria-label="Page {{ part.title }}"
+            >
+              {{ part.title }}
+            </a>
+          {%- elsif part.title == paginate.current_page -%}
+            <span
+              class="pagination__link pagination__link--number pagination__link--current"
+              aria-current="page"
+              aria-label="Page {{ part.title }}, current page"
+            >
+              {{ part.title }}
+            </span>
+          {%- else -%}
+            <span class="pagination__link pagination__link--ellipsis">&hellip;</span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+
+      {%- comment -%} Next button {%- endcomment -%}
+      <li class="pagination__item">
+        {%- if paginate.next -%}
+          <a
+            href="{{ paginate.next.url }}{{ anchor_tag }}"
+            class="pagination__link pagination__link--next"
+            aria-label="Next page"
+          >
+            <span>Next</span>
+            {%- render 'icon-caret' -%}
+          </a>
+        {%- else -%}
+          <span class="pagination__link pagination__link--next pagination__link--disabled" aria-disabled="true">
+            <span>Next</span>
+            {%- render 'icon-caret' -%}
+          </span>
+        {%- endif -%}
+      </li>
+    </ul>
+  </nav>
+{%- endif -%}

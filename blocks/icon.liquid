@@ -1,0 +1,28 @@
+<div class="block-icon" {{ block.shopify_attributes }}>
+  {%- if block.settings.icon != 'none' -%}
+    {%- render block.settings.icon -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Icon",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "icon-check", "label": "Checkmark" },
+        { "value": "icon-star", "label": "Star" },
+        { "value": "icon-cart", "label": "Cart" },
+        { "value": "icon-share", "label": "Share" },
+        { "value": "icon-search", "label": "Search" }
+      ],
+      "default": "none"
+    }
+  ]
+}
+{% endschema %}

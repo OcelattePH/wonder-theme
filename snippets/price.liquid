@@ -1,0 +1,97 @@
+{% doc %}
+  Renders product price, sale price, compare-at, badges, and unit pricing.
+
+  @param {product} product - The product object
+  @param {boolean} use_variant - Use selected/first-available variant pricing (default: false)
+  @param {boolean} show_badges - Show sale/percentage badge (default: true)
+  @param {string} price_class - Additional CSS class for the wrapper
+{% enddoc %}
+
+{%- if use_variant -%}
+  {%- assign target = product.selected_or_first_available_variant -%}
+{%- else -%}
+  {%- assign target = product -%}
+{%- endif -%}
+
+{%- assign price = target.price -%}
+{%- assign compare_at_price = target.compare_at_price -%}
+{%- assign available = target.available -%}
+
+{%- if use_variant == false -%}
+  {%- assign price = product.price -%}
+  {%- assign compare_at_price = product.compare_at_price -%}
+  {%- assign available = product.available -%}
+{%- endif -%}
+
+{%- assign on_sale = false -%}
+{%- if compare_at_price and compare_at_price > price -%}
+  {%- assign on_sale = true -%}
+{%- endif -%}
+
+{%- assign has_range = false -%}
+{%- if product.price_varies -%}
+  {%- assign has_range = true -%}
+{%- endif -%}
+
+{%- if show_badges == nil -%}
+  {%- assign show_badges = true -%}
+{%- endif -%}
+
+<div class="price {{ price_class }}{% if on_sale %} price--on-sale{% endif %}{% unless available %} price--sold-out{% endunless %}{% if has_range %} price--varies{% endif %}">
+  <div class="price__container">
+    {%- comment -%} Regular / Sale price {%- endcomment -%}
+    <div class="price__regular">
+      <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+      <span class="price__amount price__amount--regular">
+        {%- if has_range -%}
+          <span class="price__from">{{ 'products.product.price.from_price_html' | t: price: price | money }}</span>
+        {%- else -%}
+          {{ price | money }}
+        {%- endif -%}
+      </span>
+    </div>
+
+    {%- if on_sale -%}
+      <div class="price__sale">
+        <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+        <span class="price__amount price__amount--compare">
+          <s>{{ compare_at_price | money }}</s>
+        </span>
+        <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
+        <span class="price__amount price__amount--sale">
+          {{ price | money }}
+        </span>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Unit price {%- endcomment -%}
+  {%- if target.unit_price_measurement -%}
+    <div class="price__unit-price caption">
+      <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+      <span>{{ target.unit_price | money }}</span>
+      <span aria-hidden="true">/</span>
+      <span class="visually-hidden">{{ 'accessibility.unit_price_separator' | t }}</span>
+      {%- if target.unit_price_measurement.reference_value != 1 -%}
+        {{ target.unit_price_measurement.reference_value }}
+      {%- endif -%}
+      {{ target.unit_price_measurement.reference_unit }}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Badges {%- endcomment -%}
+  {%- if show_badges -%}
+    {%- if on_sale -%}
+      {%- assign savings_pct = compare_at_price | minus: price | times: 100 | divided_by: compare_at_price -%}
+      <span class="badge badge--sale badge--percentage" aria-hidden="true">
+        -{{ savings_pct }}%
+      </span>
+    {%- endif -%}
+
+    {%- unless available -%}
+      <span class="badge badge--soldout">
+        {{ 'products.product.sold_out' | t }}
+      </span>
+    {%- endunless -%}
+  {%- endif -%}
+</div>

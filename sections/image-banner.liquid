@@ -1,0 +1,488 @@
+{% render 'section-padding' %}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .image-banner {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner--full-width {
+    border-radius: 0;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner--contained {
+    border-radius: 0.8rem;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner--small {
+    min-height: 30rem;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner--medium {
+    min-height: 50rem;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner--large {
+    min-height: 70rem;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner--adapt {
+    min-height: 30rem;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__image--desktop {
+    display: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .image-banner__image--desktop {
+      display: block;
+    }
+
+    #shopify-section-{{ section.id }} .image-banner__image--mobile {
+      display: none;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, {{ section.settings.image_overlay_opacity | divided_by: 100.0 }});
+    z-index: 1;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: 100%;
+    padding: 4rem 2rem;
+    color: #fff;
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .image-banner__content {
+      padding: 6rem 4rem;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content--top-left {
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content--top-center {
+    align-items: flex-start;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content--top-right {
+    align-items: flex-start;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content--middle-left {
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content--middle-center {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content--middle-right {
+    align-items: center;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content--bottom-left {
+    align-items: flex-end;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content--bottom-center {
+    align-items: flex-end;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content--bottom-right {
+    align-items: flex-end;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__box {
+    max-width: 64rem;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__heading {
+    margin: 0 0 1.6rem;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__text {
+    margin: 0 0 2rem;
+    line-height: 1.7;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__text p {
+    margin: 0 0 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content--top-center .image-banner__buttons,
+  #shopify-section-{{ section.id }} .image-banner__content--middle-center .image-banner__buttons,
+  #shopify-section-{{ section.id }} .image-banner__content--bottom-center .image-banner__buttons {
+    justify-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__content--top-right .image-banner__buttons,
+  #shopify-section-{{ section.id }} .image-banner__content--middle-right .image-banner__buttons,
+  #shopify-section-{{ section.id }} .image-banner__content--bottom-right .image-banner__buttons {
+    justify-content: flex-end;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__button {
+    display: inline-block;
+    padding: 1.2rem 3.2rem;
+    border-radius: 0.4rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__button--primary {
+    background: #fff;
+    color: #1a1a1a;
+    border: none;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__button--secondary {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__button:hover {
+    opacity: 0.85;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #d4d4d4;
+  }
+
+  #shopify-section-{{ section.id }} .image-banner__placeholder svg {
+    width: 40%;
+    max-width: 20rem;
+    fill: #bbb;
+  }
+{%- endstyle -%}
+
+<div class="color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
+  {%- unless section.settings.full_width -%}<div class="page-width">{%- endunless -%}
+
+  <div class="image-banner image-banner--{{ section.settings.height }} {% if section.settings.full_width %}image-banner--full-width{% else %}image-banner--contained{% endif %}">
+    {%- comment -%} Background media {%- endcomment -%}
+    <div class="image-banner__media">
+      {%- if section.settings.image != blank -%}
+        <img
+          class="image-banner__image image-banner__image--desktop{% unless section.settings.image_mobile != blank %} image-banner__image--mobile{% endunless %}"
+          src="{{ section.settings.image | image_url: width: 1920 }}"
+          alt="{{ section.settings.image.alt | escape }}"
+          loading="lazy"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          srcset="
+            {{ section.settings.image | image_url: width: 750 }} 750w,
+            {{ section.settings.image | image_url: width: 1100 }} 1100w,
+            {{ section.settings.image | image_url: width: 1500 }} 1500w,
+            {{ section.settings.image | image_url: width: 1920 }} 1920w
+          "
+          sizes="{% if section.settings.full_width %}100vw{% else %}(max-width: 1200px) 100vw, 1200px{% endif %}"
+        >
+      {%- else -%}
+        <div class="image-banner__placeholder">
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.image_mobile != blank -%}
+        <img
+          class="image-banner__image image-banner__image--mobile"
+          src="{{ section.settings.image_mobile | image_url: width: 750 }}"
+          alt="{{ section.settings.image_mobile.alt | escape }}"
+          loading="lazy"
+          width="{{ section.settings.image_mobile.width }}"
+          height="{{ section.settings.image_mobile.height }}"
+          srcset="
+            {{ section.settings.image_mobile | image_url: width: 375 }} 375w,
+            {{ section.settings.image_mobile | image_url: width: 550 }} 550w,
+            {{ section.settings.image_mobile | image_url: width: 750 }} 750w
+          "
+          sizes="100vw"
+        >
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Overlay {%- endcomment -%}
+    <div class="image-banner__overlay" aria-hidden="true"></div>
+
+    {%- comment -%} Content {%- endcomment -%}
+    <div class="image-banner__content image-banner__content--{{ section.settings.content_position }}">
+      <div class="image-banner__box">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'heading' -%}
+              {%- if block.settings.heading != blank -%}
+                <{{ block.settings.heading_size }} class="image-banner__heading" {{ block.shopify_attributes }}>
+                  {{ block.settings.heading }}
+                </{{ block.settings.heading_size }}>
+              {%- endif -%}
+
+            {%- when 'text' -%}
+              {%- if block.settings.text != blank -%}
+                <div class="image-banner__text rte" {{ block.shopify_attributes }}>
+                  {{ block.settings.text }}
+                </div>
+              {%- endif -%}
+
+            {%- when 'buttons' -%}
+              <div class="image-banner__buttons" {{ block.shopify_attributes }}>
+                {%- if block.settings.button_label_1 != blank -%}
+                  <a
+                    {% if block.settings.button_link_1 != blank %}href="{{ block.settings.button_link_1 }}"{% endif %}
+                    class="image-banner__button image-banner__button--primary"
+                  >
+                    {{ block.settings.button_label_1 | escape }}
+                  </a>
+                {%- endif -%}
+                {%- if block.settings.button_label_2 != blank -%}
+                  <a
+                    {% if block.settings.button_link_2 != blank %}href="{{ block.settings.button_link_2 }}"{% endif %}
+                    class="image-banner__button image-banner__button--secondary"
+                  >
+                    {{ block.settings.button_label_2 | escape }}
+                  </a>
+                {%- endif -%}
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  {%- unless section.settings.full_width -%}</div>{%- endunless -%}
+</div>
+
+{% schema %}
+{
+  "name": "Image banner",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40,
+      "unit": "%",
+      "label": "Image overlay opacity"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium",
+      "label": "Banner height"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "options": [
+        { "value": "top-left", "label": "Top left" },
+        { "value": "top-center", "label": "Top center" },
+        { "value": "top-right", "label": "Top right" },
+        { "value": "middle-left", "label": "Middle left" },
+        { "value": "middle-center", "label": "Middle center" },
+        { "value": "middle-right", "label": "Middle right" },
+        { "value": "bottom-left", "label": "Bottom left" },
+        { "value": "bottom-center", "label": "Bottom center" },
+        { "value": "bottom-right", "label": "Bottom right" }
+      ],
+      "default": "middle-center",
+      "label": "Content position"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "default": true,
+      "label": "Full width"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 0,
+      "unit": "px",
+      "label": "Top padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 0,
+      "unit": "px",
+      "label": "Bottom padding"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "Image banner",
+          "label": "Heading"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "options": [
+            { "value": "h1", "label": "H1" },
+            { "value": "h2", "label": "H2" },
+            { "value": "h3", "label": "H3" }
+          ],
+          "default": "h1",
+          "label": "Heading size"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>Give customers details about the banner image or a current promotion.</p>",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "buttons",
+      "name": "Buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label_1",
+          "default": "Shop now",
+          "label": "First button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link_1",
+          "label": "First button link"
+        },
+        {
+          "type": "text",
+          "id": "button_label_2",
+          "label": "Second button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link_2",
+          "label": "Second button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image banner",
+      "blocks": [
+        { "type": "heading" },
+        { "type": "text" },
+        { "type": "buttons" }
+      ]
+    }
+  ]
+}
+{% endschema %}

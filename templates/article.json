@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-article",
+      "settings": {},
+      "blocks": {
+        "featured_image": { "type": "featured_image" },
+        "title": { "type": "title" },
+        "content": { "type": "content" },
+        "share": { "type": "share" }
+      },
+      "block_order": ["featured_image", "title", "content", "share"]
+    }
+  },
+  "order": ["main"]
+}

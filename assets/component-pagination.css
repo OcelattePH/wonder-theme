@@ -1,0 +1,157 @@
+/* ==========================================================================
+   Wonder Theme — component-pagination.css
+   Pagination navigation styles.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. Pagination Container
+   -------------------------------------------------------------------------- */
+
+.pagination {
+  margin-block-start: 4rem;
+  padding-block-start: 2rem;
+  border-block-start: 1px solid rgba(var(--color-foreground), 0.08);
+}
+
+.pagination__list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. Page Links & Numbers
+   -------------------------------------------------------------------------- */
+
+.pagination__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4rem;
+  min-height: 4rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+  border-radius: var(--buttons-radius);
+  transition: background-color var(--duration-default) ease,
+              color var(--duration-default) ease;
+}
+
+.pagination__link--number:hover {
+  background-color: rgba(var(--color-foreground), 0.06);
+}
+
+.pagination__link--number:focus-visible {
+  outline: 2px solid rgb(var(--color-foreground));
+  outline-offset: 2px;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. Current Page
+   -------------------------------------------------------------------------- */
+
+.pagination__link--current {
+  background-color: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  font-weight: 600;
+  pointer-events: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. Previous / Next Buttons
+   -------------------------------------------------------------------------- */
+
+.pagination__link--prev,
+.pagination__link--next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.pagination__link--prev:hover,
+.pagination__link--next:hover {
+  background-color: rgba(var(--color-foreground), 0.06);
+}
+
+.pagination__link--prev:focus-visible,
+.pagination__link--next:focus-visible {
+  outline: 2px solid rgb(var(--color-foreground));
+  outline-offset: 2px;
+}
+
+.pagination__link--prev svg,
+.pagination__link--next svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.pagination__link--prev svg {
+  transform: rotate(90deg);
+}
+
+.pagination__link--next svg {
+  transform: rotate(-90deg);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. Disabled State
+   -------------------------------------------------------------------------- */
+
+.pagination__link--disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   6. Ellipsis
+   -------------------------------------------------------------------------- */
+
+.pagination__link--ellipsis {
+  min-width: auto;
+  padding: 0.4rem;
+  color: rgba(var(--color-foreground), 0.4);
+  pointer-events: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. Mobile
+   -------------------------------------------------------------------------- */
+
+@media screen and (max-width: 749px) {
+  .pagination {
+    margin-block-start: 3rem;
+  }
+
+  .pagination__link {
+    min-width: 3.6rem;
+    min-height: 3.6rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 1.3rem;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   8. Reduced Motion
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .pagination__link {
+    transition: none;
+  }
+}

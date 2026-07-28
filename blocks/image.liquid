@@ -1,0 +1,43 @@
+{%- if block.settings.image != blank -%}
+  <div class="block-image" {{ block.shopify_attributes }}>
+    {{
+      block.settings.image
+      | image_url: width: block.settings.image.width
+      | image_tag:
+        loading: 'lazy',
+        widths: '165, 360, 535, 750, 1070, 1500',
+        sizes: '(min-width: 750px) calc((100vw - 130px) / 2), calc(100vw - 50px)',
+        class: 'block-image__img'
+    }}
+  </div>
+{%- else -%}
+  <div class="block-image block-image--placeholder" {{ block.shopify_attributes }}>
+    {{ 'image' | placeholder_svg_tag: 'placeholder' }}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Image",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "square", "label": "Square" },
+        { "value": "landscape", "label": "Landscape" }
+      ],
+      "default": "adapt"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "banner": {
+      "type": "image-banner",
+      "settings": {}
+    },
+    "rich_text": {
+      "type": "rich-text",
+      "settings": {}
+    },
+    "image_text": {
+      "type": "image-with-text",
+      "settings": {}
+    }
+  },
+  "order": ["banner", "rich_text", "image_text"]
+}

@@ -1,0 +1,83 @@
+/* ==========================================================================
+   Component: Scrolling Marquee
+   ========================================================================== */
+
+.marquee {
+  overflow: hidden;
+  width: 100%;
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+.marquee__track {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: marquee-scroll var(--marquee-speed, 30s) linear infinite;
+  will-change: transform;
+}
+
+.marquee__item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 1rem;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+.marquee__link {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity var(--duration-default) ease;
+}
+
+.marquee__link:hover {
+  opacity: 0.7;
+}
+
+.marquee__separator {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.4rem;
+  font-size: 1.3rem;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* Keyframes: content is repeated 4x, so one full loop = 25% shift */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-25%);
+  }
+}
+
+/* Pause animation on hover for readability */
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+/* Accessibility: disable motion for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    animation: none;
+  }
+}
+
+/* Responsive font size */
+@media screen and (min-width: 750px) {
+  .marquee__item {
+    font-size: 1.4rem;
+    padding: 0 1.2rem;
+  }
+
+  .marquee__separator {
+    font-size: 1.4rem;
+    padding: 0 0.6rem;
+  }
+}

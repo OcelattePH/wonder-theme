@@ -1,0 +1,312 @@
+/* ==========================================================================
+   Wonder Theme — component-card.css
+   Product card styles for card-product.liquid snippet.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. Card Container
+   -------------------------------------------------------------------------- */
+
+.card-product {
+  position: relative;
+  border-radius: var(--card-corner-radius);
+  border: var(--card-border-width) solid var(--card-border-color);
+  overflow: hidden;
+  background-color: rgb(var(--color-background));
+  transition: box-shadow var(--duration-default) ease;
+}
+
+.card-product:hover {
+  box-shadow: 0 0.4rem 1.2rem rgba(var(--color-shadow), 0.08);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. Media / Image Area
+   -------------------------------------------------------------------------- */
+
+.card-product__media {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-product__media--adapt {
+  aspect-ratio: auto;
+}
+
+.card-product__media--portrait {
+  aspect-ratio: 2 / 3;
+}
+
+.card-product__media--square {
+  aspect-ratio: 1 / 1;
+}
+
+.card-product__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-product__media-primary {
+  transition: transform var(--duration-long) ease;
+}
+
+.card-product:hover .card-product__media-primary {
+  transform: scale(1.03);
+}
+
+.card-product__media-secondary {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--duration-default) ease;
+}
+
+.card-product:hover .card-product__media-secondary {
+  opacity: 1;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. Quick Add Overlay
+   -------------------------------------------------------------------------- */
+
+.card-product__quick-add {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 3;
+  padding: 1rem;
+  opacity: 0;
+  transform: translateY(0.8rem);
+  transition: opacity var(--duration-default) ease,
+              transform var(--duration-default) ease;
+}
+
+.card-product:hover .card-product__quick-add {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media screen and (max-width: 749px) {
+  .card-product__quick-add {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-product__quick-add-form {
+  width: 100%;
+}
+
+.card-product__quick-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 4.2rem;
+  padding: 1rem 1.6rem;
+  border: none;
+  border-radius: var(--buttons-radius);
+  font-family: inherit;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: opacity var(--duration-default) ease;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.card-product__quick-add-btn:focus-visible {
+  outline: 2px solid rgb(var(--color-foreground));
+  outline-offset: 2px;
+}
+
+
+/* Add to cart button */
+
+.card-product__quick-add-btn--atc {
+  background-color: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+}
+
+.card-product__quick-add-btn--atc:hover {
+  opacity: 0.85;
+}
+
+
+/* Choose options link-style button */
+
+.card-product__quick-add-btn--options {
+  background-color: rgba(var(--color-background), 0.92);
+  color: rgb(var(--color-foreground));
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+  font-weight: var(--font-body-weight, 400);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.card-product__quick-add-btn--options:hover {
+  opacity: 0.7;
+}
+
+
+/* Sold out button */
+
+.card-product__quick-add-btn--soldout {
+  background-color: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+
+/* Spinner inside quick-add button */
+
+.card-product__quick-add-spinner {
+  width: 2rem;
+  height: 2rem;
+}
+
+.card-product__quick-add-spinner .spinner {
+  width: 100%;
+  height: 100%;
+}
+
+.card-product__quick-add-text.hidden,
+.card-product__quick-add-spinner.hidden {
+  display: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. Badges (positioned inside media)
+   -------------------------------------------------------------------------- */
+
+.card-product__media .badge {
+  position: absolute;
+  inset-block-start: var(--badge-position);
+  inset-inline-start: var(--badge-position);
+  z-index: 2;
+}
+
+.card-product__media .badge + .badge {
+  inset-block-start: calc(var(--badge-position) + 3.2rem);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. Product Info
+   -------------------------------------------------------------------------- */
+
+.card-product__info {
+  padding-block-start: 1.2rem;
+  padding-inline: 0.2rem;
+}
+
+.card-product__vendor {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.5);
+  margin-block-end: 0.2rem;
+}
+
+.card-product__title {
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+  font-weight: 400;
+  line-height: 1.3;
+  margin-block-end: 0.4rem;
+}
+
+.card-product__title a {
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+}
+
+.card-product__title a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.card-product__title a:hover {
+  text-decoration: underline;
+}
+
+
+/* --------------------------------------------------------------------------
+   6. Rating
+   -------------------------------------------------------------------------- */
+
+.card-product__rating {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-block-start: 0.4rem;
+}
+
+.card-product__rating-stars {
+  display: inline-flex;
+  gap: 0.1rem;
+  color: rgb(var(--color-foreground));
+}
+
+.card-product__rating-stars .spinner,
+.card-product__rating-stars svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.card-product__rating-count {
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.5);
+}
+
+
+/* --------------------------------------------------------------------------
+   7. Price Overrides (scoped to card)
+   -------------------------------------------------------------------------- */
+
+.card-product .price {
+  font-size: 1.4rem;
+}
+
+.card-product .price__amount--compare {
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.5);
+}
+
+
+/* --------------------------------------------------------------------------
+   8. Reduced Motion
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .card-product__media-primary,
+  .card-product__media-secondary,
+  .card-product__quick-add,
+  .card-product {
+    transition: none;
+  }
+
+  .card-product:hover .card-product__media-primary {
+    transform: none;
+  }
+}

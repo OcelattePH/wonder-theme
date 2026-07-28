@@ -1,0 +1,285 @@
+{% render 'section-padding' %}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .rich-text {
+    display: flex;
+    flex-direction: column;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  #shopify-section-{{ section.id }} .rich-text--left {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  #shopify-section-{{ section.id }} .rich-text--center {
+    align-items: center;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .rich-text--right {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  #shopify-section-{{ section.id }} .rich-text__caption {
+    margin: 0 0 1.2rem;
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  #shopify-section-{{ section.id }} .rich-text__heading {
+    margin: 0 0 1.6rem;
+  }
+
+  #shopify-section-{{ section.id }} .rich-text__text {
+    margin: 0 0 2rem;
+    line-height: 1.7;
+  }
+
+  #shopify-section-{{ section.id }} .rich-text__text p {
+    margin: 0 0 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .rich-text__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .rich-text__button {
+    margin-top: 0.8rem;
+  }
+
+  #shopify-section-{{ section.id }} .button--primary {
+    display: inline-block;
+    padding: 1.2rem 3.2rem;
+    background: var(--color-button, #1a1a1a);
+    color: var(--color-button-text, #fff);
+    border: none;
+    border-radius: 0.4rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .button--primary:hover {
+    opacity: 0.85;
+  }
+
+  #shopify-section-{{ section.id }} .button--secondary {
+    display: inline-block;
+    padding: 1.2rem 3.2rem;
+    background: transparent;
+    color: var(--color-button, #1a1a1a);
+    border: 1px solid currentColor;
+    border-radius: 0.4rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .button--secondary:hover {
+    background: var(--color-button, #1a1a1a);
+    color: var(--color-button-text, #fff);
+  }
+
+  #shopify-section-{{ section.id }} .button--link {
+    display: inline-block;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+{%- endstyle -%}
+
+<div class="color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
+  <div class="rich-text rich-text--{{ section.settings.content_position }} animate animate--slide-in">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'caption' -%}
+          {%- if block.settings.caption != blank -%}
+            <p class="rich-text__caption" {{ block.shopify_attributes }}>
+              {{ block.settings.caption | escape }}
+            </p>
+          {%- endif -%}
+
+        {%- when 'heading' -%}
+          {%- if block.settings.heading != blank -%}
+            <{{ block.settings.heading_size }} class="rich-text__heading" {{ block.shopify_attributes }}>
+              {{ block.settings.heading }}
+            </{{ block.settings.heading_size }}>
+          {%- endif -%}
+
+        {%- when 'text' -%}
+          {%- if block.settings.text != blank -%}
+            <div class="rich-text__text rte" {{ block.shopify_attributes }}>
+              {{ block.settings.text }}
+            </div>
+          {%- endif -%}
+
+        {%- when 'button' -%}
+          {%- if block.settings.button_label != blank -%}
+            <div class="rich-text__button" {{ block.shopify_attributes }}>
+              <a
+                {% if block.settings.button_link != blank %}href="{{ block.settings.button_link }}"{% endif %}
+                class="button--{{ block.settings.button_style }}"
+              >
+                {{ block.settings.button_label | escape }}
+              </a>
+            </div>
+          {%- endif -%}
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Rich text",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "content_position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center",
+      "label": "Content position"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px",
+      "label": "Top padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px",
+      "label": "Bottom padding"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "Talk about your brand",
+          "label": "Heading"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "options": [
+            { "value": "h1", "label": "H1" },
+            { "value": "h2", "label": "H2" },
+            { "value": "h3", "label": "H3" }
+          ],
+          "default": "h2",
+          "label": "Heading size"
+        }
+      ]
+    },
+    {
+      "type": "caption",
+      "name": "Caption",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "caption",
+          "default": "Our story",
+          "label": "Caption"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store.</p>",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "default": "Learn more",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "options": [
+            { "value": "primary", "label": "Primary" },
+            { "value": "secondary", "label": "Secondary" },
+            { "value": "link", "label": "Link" }
+          ],
+          "default": "primary",
+          "label": "Button style"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rich text",
+      "blocks": [
+        { "type": "caption" },
+        { "type": "heading" },
+        { "type": "text" },
+        { "type": "button" }
+      ]
+    }
+  ]
+}
+{% endschema %}

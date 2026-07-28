@@ -1,0 +1,243 @@
+/*
+ * section-footer.css -- Footer layout and styles
+ */
+
+.footer {
+  padding: 3.6rem 0 2rem;
+  color: rgb(var(--color-foreground));
+  background-color: rgb(var(--color-background));
+  border-top: 0.1rem solid rgba(var(--color-foreground), 0.08);
+}
+
+/* Upper section (columns)
+   ========================================================================== */
+
+.footer__content-top {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding-bottom: 3rem;
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.08);
+}
+
+@media screen and (min-width: 750px) {
+  .footer__content-top {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 3rem 4rem;
+  }
+}
+
+/* Columns
+   ========================================================================== */
+
+.footer__column {
+  flex: 1;
+  min-width: 16rem;
+}
+
+@media screen and (max-width: 749px) {
+  .footer__column {
+    text-align: center;
+  }
+}
+
+.footer__heading {
+  margin: 0 0 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06rem;
+  color: rgb(var(--color-foreground));
+}
+
+/* Link lists
+   ========================================================================== */
+
+.footer__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer__list-item {
+  margin-bottom: 0.8rem;
+}
+
+.footer__list-item:last-child {
+  margin-bottom: 0;
+}
+
+.footer__list-item a {
+  font-size: 1.4rem;
+  color: rgba(var(--color-foreground), 0.7);
+  text-decoration: none;
+  transition: color var(--duration-default) ease;
+}
+
+.footer__list-item a:hover {
+  color: rgb(var(--color-foreground));
+}
+
+/* Social icons
+   ========================================================================== */
+
+.footer__social {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+
+@media screen and (max-width: 749px) {
+  .footer__social {
+    justify-content: center;
+  }
+}
+
+.footer__social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  color: rgba(var(--color-foreground), 0.7);
+  transition: color var(--duration-default) ease;
+}
+
+.footer__social-link:hover {
+  color: rgb(var(--color-foreground));
+}
+
+.footer__social-link svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Localization selectors
+   ========================================================================== */
+
+.footer__localization {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+@media screen and (max-width: 749px) {
+  .footer__localization {
+    justify-content: center;
+  }
+}
+
+.footer__localization-form {
+  position: relative;
+}
+
+.footer__localization-select {
+  padding: 0.8rem 3rem 0.8rem 1.2rem;
+  font-size: 1.3rem;
+  color: rgb(var(--color-foreground));
+  background-color: transparent;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.2);
+  border-radius: var(--input-border-radius, 0);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='currentColor' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+}
+
+/* Lower section
+   ========================================================================== */
+
+.footer__content-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding-top: 2rem;
+}
+
+@media screen and (min-width: 750px) {
+  .footer__content-bottom {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+/* Payment icons
+   ========================================================================== */
+
+.footer__payment {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer__payment-icon {
+  width: 3.8rem;
+  height: 2.4rem;
+}
+
+.footer__payment-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Copyright
+   ========================================================================== */
+
+.footer__copyright {
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.5);
+  text-align: center;
+}
+
+.footer__copyright a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer__copyright a:hover {
+  text-decoration: underline;
+}
+
+/* Newsletter / email signup (commonly in footer)
+   ========================================================================== */
+
+.footer__newsletter {
+  max-width: 36rem;
+}
+
+.footer__newsletter-field {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.footer__newsletter-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.8rem 1.2rem;
+  font-size: 1.3rem;
+  color: rgb(var(--color-foreground));
+  background-color: transparent;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.2);
+  border-radius: var(--input-border-radius, 0);
+}
+
+.footer__newsletter-button {
+  padding: 0.8rem 1.6rem;
+  font-size: 1.3rem;
+  color: rgb(var(--color-button-text));
+  background-color: rgb(var(--color-button));
+  border: none;
+  border-radius: var(--input-border-radius, 0);
+  cursor: pointer;
+  transition: opacity var(--duration-default) ease;
+}
+
+.footer__newsletter-button:hover {
+  opacity: 0.85;
+}

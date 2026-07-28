@@ -1,0 +1,116 @@
+{%- style -%}
+  .collection-banner__image {
+    width: 100%;
+    max-height: 40rem;
+    object-fit: cover;
+    border-radius: var(--media-radius);
+  }
+  @media screen and (min-width: 750px) {
+    .collection-banner__image {
+      max-height: 50rem;
+    }
+  }
+  .collection-banner__info {
+    padding-block-start: 2rem;
+    text-align: center;
+  }
+  .collection-banner__description {
+    margin-block-start: 1.2rem;
+    max-width: 80rem;
+    margin-inline: auto;
+    color: rgba(var(--color-foreground), 0.7);
+  }
+  .collection-banner__count {
+    margin-block-start: 0.8rem;
+    font-size: 1.4rem;
+    color: rgba(var(--color-foreground), 0.5);
+  }
+{%- endstyle -%}
+
+{%- render 'section-padding' -%}
+
+<div class="collection-banner color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
+  <div class="page-width">
+    {%- if section.settings.show_collection_image and collection.image -%}
+      <img
+        class="collection-banner__image"
+        src="{{ collection.image | image_url: width: 1500 }}"
+        srcset="
+          {{ collection.image | image_url: width: 375 }} 375w,
+          {{ collection.image | image_url: width: 750 }} 750w,
+          {{ collection.image | image_url: width: 1100 }} 1100w,
+          {{ collection.image | image_url: width: 1500 }} 1500w,
+          {{ collection.image | image_url: width: 1780 }} 1780w,
+          {{ collection.image | image_url: width: 2000 }} 2000w
+        "
+        sizes="100vw"
+        alt="{{ collection.image.alt | escape }}"
+        width="{{ collection.image.width }}"
+        height="{{ collection.image.height }}"
+        loading="eager"
+        fetchpriority="high"
+      >
+    {%- endif -%}
+
+    <div class="collection-banner__info">
+      <h1 class="collection-banner__title h1">{{ collection.title }}</h1>
+
+      {%- if section.settings.show_collection_description and collection.description != blank -%}
+        <div class="collection-banner__description rte">{{ collection.description }}</div>
+      {%- endif -%}
+
+      <p class="collection-banner__count">{{ collection.products_count }} products</p>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection banner",
+  "tag": "section",
+  "class": "section-collection-banner",
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "default": true,
+      "label": "Show collection image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "default": true,
+      "label": "Show collection description"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px",
+      "label": "Top padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 28,
+      "unit": "px",
+      "label": "Bottom padding"
+    }
+  ]
+}
+{% endschema %}

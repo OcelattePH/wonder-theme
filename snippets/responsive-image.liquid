@@ -1,0 +1,33 @@
+{% doc %}
+  Responsive image helper with srcset generation.
+  @param {image} image - The image object
+  @param {string} sizes - The sizes attribute (default: "(min-width: 990px) 50vw, 100vw")
+  @param {string} widths - Comma-separated widths for srcset (default: "165,360,533,720,940,1066")
+  @param {string} class - CSS class(es) to apply
+  @param {string} loading - Loading strategy (default: "lazy")
+  @param {string} alt - Alt text override
+{% enddoc %}
+
+{%- if image != blank -%}
+  {%- assign default_sizes = sizes | default: '(min-width: 990px) 50vw, 100vw' -%}
+  {%- assign default_widths = widths | default: '165,360,533,720,940,1066' -%}
+  {%- assign default_loading = loading | default: 'lazy' -%}
+  {%- assign alt_text = alt | default: image.alt | escape -%}
+  {%- assign width_array = default_widths | split: ',' -%}
+
+  <img
+    {%- if class %} class="{{ class }}"{% endif %}
+    srcset="
+      {%- for w in width_array -%}
+        {%- assign w_stripped = w | strip -%}
+        {{ image | image_url: width: w_stripped }} {{ w_stripped }}w{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    "
+    src="{{ image | image_url: width: 533 }}"
+    sizes="{{ default_sizes }}"
+    alt="{{ alt_text }}"
+    loading="{{ default_loading }}"
+    width="{{ image.width }}"
+    height="{{ image.height }}"
+  >
+{%- endif -%}

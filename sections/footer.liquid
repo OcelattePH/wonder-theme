@@ -1,0 +1,293 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<footer class="footer color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
+  {%- comment -%} Main footer content: blocks {%- endcomment -%}
+  {%- if section.blocks.size > 0 -%}
+    <div class="footer__content page-width">
+      <div class="footer__columns grid grid--2-col grid--4-col">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'link_list' -%}
+              <div class="footer__column" {{ block.shopify_attributes }}>
+                {%- if block.settings.heading != blank -%}
+                  <h3 class="footer__heading h6">{{ block.settings.heading | escape }}</h3>
+                {%- endif -%}
+                {%- if block.settings.menu != blank -%}
+                  <ul class="footer__list list-unstyled" role="list">
+                    {%- for link in linklists[block.settings.menu].links -%}
+                      <li class="footer__list-item">
+                        <a
+                          href="{{ link.url }}"
+                          class="footer__link"
+                          {% if link.current %} aria-current="page"{% endif %}
+                        >
+                          {{ link.title | escape }}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+              </div>
+
+            {%- when 'text' -%}
+              <div class="footer__column" {{ block.shopify_attributes }}>
+                {%- if block.settings.heading != blank -%}
+                  <h3 class="footer__heading h6">{{ block.settings.heading | escape }}</h3>
+                {%- endif -%}
+                {%- if block.settings.subtext != blank -%}
+                  <div class="footer__text rte">{{ block.settings.subtext }}</div>
+                {%- endif -%}
+              </div>
+
+            {%- when 'brand_information' -%}
+              <div class="footer__column footer__column--brand" {{ block.shopify_attributes }}>
+                {%- if settings.brand_image != blank -%}
+                  {{
+                    settings.brand_image
+                    | image_url: width: 500
+                    | image_tag:
+                      class: 'footer__brand-image',
+                      alt: shop.name,
+                      loading: 'lazy',
+                      widths: '100, 150, 200, 250, 300, 400, 500'
+                  }}
+                {%- endif -%}
+                {%- if settings.brand_headline != blank -%}
+                  <h3 class="footer__heading h6">{{ settings.brand_headline | escape }}</h3>
+                {%- endif -%}
+                {%- if settings.brand_description != blank -%}
+                  <div class="footer__text rte">{{ settings.brand_description }}</div>
+                {%- endif -%}
+              </div>
+
+            {%- when '@app' -%}
+              <div class="footer__column" {{ block.shopify_attributes }}>
+                {% render block %}
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Social icons {%- endcomment -%}
+  {%- if section.settings.show_social -%}
+    <div class="footer__social page-width">
+      {%- render 'social-icons' -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Localization selectors {%- endcomment -%}
+  {%- if section.settings.show_country_selector and localization.available_countries.size > 1
+    or section.settings.show_language_selector and localization.available_languages.size > 1
+  -%}
+    <div class="footer__localization page-width">
+      {%- form 'localization', id: 'FooterLocalizationForm', class: 'footer__localization-form' -%}
+        {%- if section.settings.show_country_selector and localization.available_countries.size > 1 -%}
+          <div class="footer__selector">
+            <label class="footer__selector-label caption" for="FooterCountrySelector">
+              {{ 'localization.country_label' | t }}
+            </label>
+            <div class="select">
+              <select id="FooterCountrySelector" name="country_code">
+                {%- for country in localization.available_countries -%}
+                  <option
+                    value="{{ country.iso_code }}"
+                    {% if country.iso_code == localization.country.iso_code %} selected{% endif %}
+                  >
+                    {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.show_language_selector and localization.available_languages.size > 1 -%}
+          <div class="footer__selector">
+            <label class="footer__selector-label caption" for="FooterLanguageSelector">
+              {{ 'localization.language_label' | t }}
+            </label>
+            <div class="select">
+              <select id="FooterLanguageSelector" name="locale_code">
+                {%- for language in localization.available_languages -%}
+                  <option
+                    value="{{ language.iso_code }}"
+                    {% if language.iso_code == localization.iso_code %} selected{% endif %}
+                    lang="{{ language.iso_code }}"
+                  >
+                    {{ language.endonym_name | capitalize }}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          </div>
+        {%- endif -%}
+
+        <button type="submit" class="button button--small">
+          {{ 'localization.update_country' | t }}
+        </button>
+      {%- endform -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Payment icons {%- endcomment -%}
+  {%- if section.settings.show_payment_icons -%}
+    <div class="footer__payment page-width">
+      <span class="visually-hidden">{{ 'sections.footer.payment_methods' | t }}</span>
+      <ul class="footer__payment-list list-unstyled" role="list">
+        {%- for type in shop.enabled_payment_types -%}
+          <li class="footer__payment-item">
+            {{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Copyright and policy links {%- endcomment -%}
+  <div class="footer__bottom page-width">
+    <div class="footer__copyright caption">
+      &copy; {{ 'now' | date: '%Y' }} {{ shop.name | link_to: routes.root_url }}
+    </div>
+
+    {%- if section.settings.show_policy_links -%}
+      {%- assign policies = shop.policies | where: 'body' -%}
+      {%- if policies.size > 0 -%}
+        <ul class="footer__policies list-unstyled" role="list">
+          {%- for policy in policies -%}
+            <li class="footer__policies-item">
+              <a href="{{ policy.url }}" class="footer__policy-link caption">
+                {{ policy.title }}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "t:sections.footer.name",
+  "class": "section-footer",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.footer.settings.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "default": true,
+      "label": "t:sections.footer.settings.show_social.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_selector",
+      "default": true,
+      "label": "t:sections.footer.settings.enable_country_selector.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language_selector",
+      "default": true,
+      "label": "t:sections.footer.settings.enable_language_selector.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "default": true,
+      "label": "t:sections.footer.settings.show_payment.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_policy_links",
+      "default": true,
+      "label": "Show policy links"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px",
+      "label": "t:sections.footer.settings.padding_top.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px",
+      "label": "t:sections.footer.settings.padding_bottom.label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link_list",
+      "name": "t:sections.footer.blocks.link_list.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Quick links",
+          "label": "t:sections.footer.blocks.link_list.settings.heading.label"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "default": "footer",
+          "label": "t:sections.footer.blocks.link_list.settings.menu.label"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "t:sections.footer.blocks.text.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "About us",
+          "label": "t:sections.footer.blocks.text.settings.heading.label"
+        },
+        {
+          "type": "richtext",
+          "id": "subtext",
+          "default": "<p>Share information about your brand.</p>",
+          "label": "t:sections.footer.blocks.text.settings.subtext.label"
+        }
+      ]
+    },
+    {
+      "type": "brand_information",
+      "name": "t:sections.footer.blocks.brand_information.name",
+      "limit": 1
+    },
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

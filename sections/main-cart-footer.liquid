@@ -1,0 +1,177 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- if cart != empty -%}
+  <div class="page-width section-{{ section.id }}-padding">
+    <div class="cart__footer" id="main-cart-footer" data-id="{{ section.id }}">
+
+      {%- if section.settings.show_free_shipping_bar -%}
+        {%- assign threshold_cents = section.settings.free_shipping_threshold | times: 100 -%}
+        {%- assign cart_total = cart.total_price -%}
+        {%- assign remaining = threshold_cents | minus: cart_total -%}
+        {%- if remaining <= 0 -%}
+          {%- assign progress = 100 -%}
+        {%- else -%}
+          {%- assign progress = cart_total | times: 100 | divided_by: threshold_cents -%}
+        {%- endif -%}
+
+        <div class="cart__free-shipping-bar">
+          {%- if remaining <= 0 -%}
+            <p class="cart__free-shipping-message caption">
+              <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16">
+                <path d="M8 0a8 8 0 100 16A8 8 0 008 0zm3.78 5.28l-4.5 5.5a.75.75 0 01-1.12.02l-2-2a.75.75 0 111.06-1.06l1.42 1.42 3.96-4.84a.75.75 0 011.18.96z" fill="currentColor"/>
+              </svg>
+              {{ 'cart.free_shipping_qualified' | t }}
+            </p>
+          {%- else -%}
+            <p class="cart__free-shipping-message caption">
+              {{ 'cart.free_shipping_remaining_html' | t: remaining: remaining | money }}
+            </p>
+          {%- endif -%}
+          <div class="cart__free-shipping-track">
+            <div class="cart__free-shipping-progress" style="width: {{ progress }}%;"></div>
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if settings.show_cart_note -%}
+        <div class="cart__note-wrapper">
+          <label for="CartNote" class="cart__note-label caption-large">
+            {{ 'cart.note' | t }}
+          </label>
+          <textarea
+            class="cart__note field__input"
+            name="note"
+            id="CartNote"
+            placeholder="{{ 'cart.note_placeholder' | t }}"
+          >{{ cart.note }}</textarea>
+        </div>
+      {%- endif -%}
+
+      <div class="cart__footer-details">
+        {%- if cart.cart_level_discount_applications.size > 0 -%}
+          <ul class="cart__discounts list-unstyled" role="list" aria-label="{{ 'cart.discount' | t }}">
+            {%- for discount in cart.cart_level_discount_applications -%}
+              <li class="cart__discount caption">
+                <svg aria-hidden="true" focusable="false" width="12" height="12" viewBox="0 0 12 12">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M7 0h5v5L7.146 9.854a.5.5 0 01-.708 0L2.146 5.561a.5.5 0 010-.707L7 0zm4 1a1 1 0 100 2 1 1 0 000-2z" fill="currentColor"/>
+                </svg>
+                {{ discount.title }}
+                (-{{ discount.total_allocated_amount | money }})
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        <div class="cart__subtotal">
+          <span class="cart__subtotal-label h4">{{ 'cart.subtotal' | t }}</span>
+          <span class="cart__subtotal-price h4">{{ cart.total_price | money_with_currency }}</span>
+        </div>
+
+        <div class="cart__tax-note">
+          <small class="tax-note caption-large rte">
+            {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+              {{ 'cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+            {%- elsif cart.taxes_included -%}
+              {{ 'cart.taxes_included_but_shipping_at_checkout' | t }}
+            {%- elsif shop.shipping_policy.body != blank -%}
+              {{ 'cart.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+            {%- else -%}
+              {{ 'cart.taxes_and_shipping_at_checkout' | t }}
+            {%- endif -%}
+          </small>
+        </div>
+
+        <div class="cart__ctas">
+          <noscript>
+            <button type="submit" class="cart__update-button button button--secondary" form="cart">
+              {{ 'cart.update' | t }}
+            </button>
+          </noscript>
+
+          <button
+            type="submit"
+            name="checkout"
+            class="cart__checkout-button button"
+            form="cart"
+            {% if cart == empty %}disabled{% endif %}
+          >
+            {{ 'cart.checkout' | t }}
+          </button>
+
+          {%- if additional_checkout_buttons -%}
+            <div class="cart__dynamic-checkout-buttons additional-checkout-buttons">
+              {{ content_for_additional_checkout_buttons }}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-footer.name",
+  "tag": "section",
+  "class": "section",
+  "enabled_on": {
+    "templates": ["cart"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_free_shipping_bar",
+      "label": "Show free shipping progress bar",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "free_shipping_threshold",
+      "min": 0,
+      "max": 500,
+      "step": 5,
+      "unit": "$",
+      "label": "Free shipping threshold",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

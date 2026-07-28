@@ -1,0 +1,457 @@
+/* ==========================================================================
+   Wonder Theme — component-facets.css
+   Filtering, sorting, and active-facets styles.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. Facets Header Bar
+   -------------------------------------------------------------------------- */
+
+.facets__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  padding-block-end: 2rem;
+  border-block-end: 1px solid rgba(var(--color-foreground), 0.08);
+  margin-block-end: 2rem;
+}
+
+.facets__header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.facets__header-right {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. Filter Open Button
+   -------------------------------------------------------------------------- */
+
+.facets__open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  position: relative;
+}
+
+.facets__open-btn svg {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+.facets__count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border-radius: 50%;
+  background-color: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. Sort Dropdown
+   -------------------------------------------------------------------------- */
+
+.facets__sort {
+  min-width: 18rem;
+}
+
+.facets__sort-select {
+  font-size: 1.4rem;
+  padding: 0.8rem 3.6rem 0.8rem 1.2rem;
+  min-height: 3.6rem;
+}
+
+.facets__product-count {
+  font-size: 1.4rem;
+  color: rgba(var(--color-foreground), 0.5);
+  white-space: nowrap;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. Filter Drawer
+   -------------------------------------------------------------------------- */
+
+.facets__drawer {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 1000;
+  width: min(38rem, 90vw);
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  transform: translateX(-100%);
+  transition: transform var(--duration-long) var(--ease-out-slow, ease);
+  display: flex;
+  flex-direction: column;
+}
+
+[dir='rtl'] .facets__drawer {
+  transform: translateX(100%);
+}
+
+.facets__drawer.is-open {
+  transform: translateX(0);
+}
+
+.facets__drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--duration-default) ease,
+              visibility var(--duration-default) ease;
+}
+
+.facets__drawer-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.facets__drawer-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  z-index: 1001;
+  background-color: rgb(var(--color-background));
+}
+
+
+/* Drawer Header */
+
+.facets__drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+  border-block-end: 1px solid rgba(var(--color-foreground), 0.08);
+  flex-shrink: 0;
+}
+
+.facets__drawer-title {
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+  font-family: var(--font-heading-family);
+  font-weight: var(--font-heading-weight);
+}
+
+.facets__close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: rgb(var(--color-foreground));
+}
+
+.facets__close-btn:focus-visible {
+  outline: 2px solid rgb(var(--color-foreground));
+  outline-offset: 2px;
+}
+
+.facets__close-btn svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+
+/* Drawer Body */
+
+.facets__drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 2rem;
+  overscroll-behavior: contain;
+}
+
+
+/* Drawer Footer */
+
+.facets__drawer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding: 2rem;
+  border-block-start: 1px solid rgba(var(--color-foreground), 0.08);
+  flex-shrink: 0;
+}
+
+.facets__clear-all {
+  flex-shrink: 0;
+}
+
+.facets__apply-btn {
+  flex: 1;
+  max-width: 18rem;
+}
+
+
+/* --------------------------------------------------------------------------
+   5. Filter Groups (details/summary)
+   -------------------------------------------------------------------------- */
+
+.facets__group {
+  border-block-end: 1px solid rgba(var(--color-foreground), 0.08);
+}
+
+.facets__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.6rem 0;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.facets__summary::-webkit-details-marker {
+  display: none;
+}
+
+.facets__summary-label {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.facets__summary svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  transition: transform var(--duration-default) ease;
+  color: rgba(var(--color-foreground), 0.5);
+}
+
+.facets__group[open] .facets__summary svg {
+  transform: rotate(180deg);
+}
+
+.facets__group-content {
+  padding-block-end: 1.6rem;
+}
+
+
+/* --------------------------------------------------------------------------
+   6. Filter Checkboxes
+   -------------------------------------------------------------------------- */
+
+.facets__fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.facets__label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1.4;
+}
+
+.facets__label input[type="checkbox"] {
+  width: 1.8rem;
+  height: 1.8rem;
+  flex-shrink: 0;
+  margin: 0;
+  cursor: pointer;
+  accent-color: rgb(var(--color-button));
+}
+
+.facets__label input[type="checkbox"]:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.facets__label input[type="checkbox"]:disabled ~ .facets__label-text {
+  opacity: 0.4;
+}
+
+.facets__label-text {
+  flex: 1;
+  color: rgb(var(--color-foreground));
+}
+
+.facets__label-count {
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.4);
+}
+
+.facets__label:hover .facets__label-text {
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+.facets__label input[type="checkbox"]:focus-visible {
+  outline: 2px solid rgb(var(--color-foreground));
+  outline-offset: 2px;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. Price Range
+   -------------------------------------------------------------------------- */
+
+.facets__price-range {
+  display: flex;
+  gap: 1.2rem;
+  align-items: flex-end;
+}
+
+.facets__price-field {
+  flex: 1;
+  position: relative;
+}
+
+.facets__price-field label {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: rgba(var(--color-foreground), 0.6);
+  margin-block-end: 0.4rem;
+}
+
+.facets__price-field input[type="number"] {
+  width: 100%;
+  font-size: 1.4rem;
+  padding: 0.8rem 1rem 0.8rem 2.6rem;
+  min-height: 3.6rem;
+}
+
+.facets__price-currency {
+  position: absolute;
+  inset-block-end: 1rem;
+  inset-inline-start: 1rem;
+  font-size: 1.4rem;
+  color: rgba(var(--color-foreground), 0.5);
+  pointer-events: none;
+  line-height: 1;
+}
+
+/* Hide number input spinners */
+.facets__price-field input[type="number"]::-webkit-outer-spin-button,
+.facets__price-field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.facets__price-field input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+
+/* --------------------------------------------------------------------------
+   8. Active Facets / Filter Tags
+   -------------------------------------------------------------------------- */
+
+.active-facets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+  padding-block-end: 2rem;
+}
+
+.active-facets:empty {
+  display: none;
+}
+
+.active-facets__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 1rem;
+  font-size: 1.3rem;
+  line-height: 1.4;
+  color: rgb(var(--color-foreground));
+  background-color: rgba(var(--color-foreground), 0.06);
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: var(--badge-corner-radius, 4rem);
+  text-decoration: none;
+  transition: background-color var(--duration-default) ease;
+}
+
+.active-facets__tag:hover {
+  background-color: rgba(var(--color-foreground), 0.12);
+}
+
+.active-facets__tag svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.active-facets__clear {
+  font-size: 1.3rem;
+  color: rgba(var(--color-foreground), 0.6);
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+.active-facets__clear:hover {
+  color: rgb(var(--color-foreground));
+}
+
+
+/* --------------------------------------------------------------------------
+   9. Mobile Overrides
+   -------------------------------------------------------------------------- */
+
+@media screen and (max-width: 749px) {
+  .facets__header {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .facets__header-right {
+    flex: 1;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .facets__sort {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .facets__product-count {
+    font-size: 1.2rem;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   10. Reduced Motion
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .facets__drawer,
+  .facets__drawer-overlay,
+  .facets__summary svg {
+    transition: none;
+  }
+}

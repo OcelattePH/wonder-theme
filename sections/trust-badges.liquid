@@ -1,0 +1,274 @@
+{% render 'section-padding' %}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .trust-badges__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 120rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .trust-badges__grid {
+      grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+      padding: 0 5rem;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .trust-badges__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.8rem;
+  }
+
+  #shopify-section-{{ section.id }} .trust-badges__icon svg {
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .trust-badges__icon--small svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .trust-badges__icon--medium svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  #shopify-section-{{ section.id }} .trust-badges__icon--large svg {
+    width: 48px;
+    height: 48px;
+  }
+
+  #shopify-section-{{ section.id }} .trust-badges__heading {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  #shopify-section-{{ section.id }} .trust-badges__text {
+    font-size: 1.2rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  #shopify-section-{{ section.id }} .trust-badges__text p {
+    margin: 0;
+  }
+{%- endstyle -%}
+
+{%- if section.blocks.size > 0 -%}
+  <div class="trust-badges color-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
+    <div class="trust-badges__grid animate animate--slide-in">
+      {%- for block in section.blocks -%}
+        <div class="trust-badges__item" {{ block.shopify_attributes }}>
+          <div class="trust-badges__icon trust-badges__icon--{{ section.settings.icon_size }}">
+            {%- case block.settings.icon -%}
+              {%- when 'checkmark' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 6L9 17l-5-5"/>
+                </svg>
+              {%- when 'leaf' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.78 10-10 10Z"/>
+                  <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                </svg>
+              {%- when 'heart' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                </svg>
+              {%- when 'globe' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                  <path d="M2 12h20"/>
+                </svg>
+              {%- when 'shield' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              {%- when 'star' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              {%- when 'truck' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+                  <path d="M15 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 13.52 9H14"/>
+                  <path d="M17 18h2"/>
+                  <circle cx="7" cy="18" r="2"/>
+                  <circle cx="21" cy="18" r="2"/>
+                </svg>
+              {%- when 'lock' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              {%- when 'recycle' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/>
+                  <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/>
+                  <path d="m14 16-3 3 3 3"/>
+                  <path d="M8.293 13.596 7.196 9.5 3.1 10.598"/>
+                  <path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 12.007 3a1.784 1.784 0 0 1 1.567.888l4.244 7.347"/>
+                  <path d="m13.378 9.633 4.096 1.098 1.097-4.096"/>
+                </svg>
+              {%- when 'award' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="6"/>
+                  <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+                </svg>
+            {%- endcase -%}
+          </div>
+
+          {%- if block.settings.heading != blank -%}
+            <h3 class="trust-badges__heading">{{ block.settings.heading | escape }}</h3>
+          {%- endif -%}
+
+          {%- if block.settings.text != blank -%}
+            <div class="trust-badges__text rte">{{ block.settings.text }}</div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Trust badges",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "Number of columns on desktop"
+    },
+    {
+      "type": "select",
+      "id": "icon_size",
+      "label": "Icon size",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36,
+      "label": "Top padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36,
+      "label": "Bottom padding"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "icon_item",
+      "name": "Icon item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "checkmark", "label": "Checkmark" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "globe", "label": "Globe" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "star", "label": "Star" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "lock", "label": "Lock" },
+            { "value": "recycle", "label": "Recycle" },
+            { "value": "award", "label": "Award" }
+          ],
+          "default": "checkmark"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Trust badge"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Add a short description for this badge</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust badges",
+      "blocks": [
+        {
+          "type": "icon_item",
+          "settings": {
+            "icon": "truck",
+            "heading": "Free shipping",
+            "text": "<p>On orders over $50</p>"
+          }
+        },
+        {
+          "type": "icon_item",
+          "settings": {
+            "icon": "shield",
+            "heading": "Secure checkout",
+            "text": "<p>100% protected payments</p>"
+          }
+        },
+        {
+          "type": "icon_item",
+          "settings": {
+            "icon": "recycle",
+            "heading": "Easy returns",
+            "text": "<p>30-day return policy</p>"
+          }
+        },
+        {
+          "type": "icon_item",
+          "settings": {
+            "icon": "heart",
+            "heading": "Premium quality",
+            "text": "<p>Handcrafted with care</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

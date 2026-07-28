@@ -1,0 +1,285 @@
+{% render 'section-padding' %}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .category-cards__grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.6rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .category-cards__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    #shopify-section-{{ section.id }} .category-cards__grid {
+      grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+    }
+  }
+
+  #shopify-section-{{ section.id }} .category-card {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 0.8rem;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  #shopify-section-{{ section.id }} .category-card__media {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .category-card__media--portrait {
+    padding-bottom: 133%;
+  }
+
+  #shopify-section-{{ section.id }} .category-card__media--square {
+    padding-bottom: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .category-card__media--landscape {
+    padding-bottom: 66%;
+  }
+
+  #shopify-section-{{ section.id }} .category-card__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  #shopify-section-{{ section.id }} .category-card:hover .category-card__image {
+    transform: scale(1.05);
+  }
+
+  #shopify-section-{{ section.id }} .category-card__overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 3.2rem 2.4rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+    z-index: 1;
+  }
+
+  #shopify-section-{{ section.id }} .category-card__heading {
+    margin: 0 0 0.4rem;
+    font-size: 2.4rem;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .category-card__subheading {
+    margin: 0 0 1.2rem;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    opacity: 0.9;
+  }
+
+  #shopify-section-{{ section.id }} .category-card__cta {
+    display: inline-block;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+    color: #fff;
+  }
+
+  #shopify-section-{{ section.id }} .category-card__placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e0e0e0;
+  }
+
+  #shopify-section-{{ section.id }} .category-card__placeholder svg {
+    width: 60%;
+    height: 60%;
+    fill: #bbb;
+  }
+{%- endstyle -%}
+
+<div class="color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
+  <div class="page-width">
+    {%- if section.blocks.size > 0 -%}
+      <div class="category-cards__grid">
+        {%- for block in section.blocks -%}
+          <a
+            class="category-card animate animate--fade-in"
+            {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            <div class="category-card__media category-card__media--{{ section.settings.image_ratio }}">
+              {%- if block.settings.image != blank -%}
+                <img
+                  class="category-card__image"
+                  src="{{ block.settings.image | image_url: width: 900 }}"
+                  alt="{{ block.settings.image.alt | default: block.settings.heading | escape }}"
+                  loading="eager"
+                  fetchpriority="high"
+                  width="{{ block.settings.image.width }}"
+                  height="{{ block.settings.image.height }}"
+                  srcset="
+                    {{ block.settings.image | image_url: width: 450 }} 450w,
+                    {{ block.settings.image | image_url: width: 600 }} 600w,
+                    {{ block.settings.image | image_url: width: 900 }} 900w,
+                    {{ block.settings.image | image_url: width: 1200 }} 1200w
+                  "
+                  sizes="(max-width: 749px) 100vw, (max-width: 989px) 50vw, calc(100vw / {{ section.settings.columns_desktop }})"
+                >
+              {%- else -%}
+                <div class="category-card__placeholder">
+                  {{ 'collection-' | append: forloop.index | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              {%- endif -%}
+            </div>
+            <div class="category-card__overlay">
+              {%- if block.settings.heading != blank -%}
+                <h3 class="category-card__heading">{{ block.settings.heading | escape }}</h3>
+              {%- endif -%}
+              {%- if block.settings.subheading != blank -%}
+                <p class="category-card__subheading">{{ block.settings.subheading | escape }}</p>
+              {%- endif -%}
+              {%- if block.settings.link_text != blank -%}
+                <span class="category-card__cta">{{ block.settings.link_text | escape }}</span>
+              {%- endif -%}
+            </div>
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero category cards",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "Number of columns on desktop"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "square", "label": "Square" },
+        { "value": "landscape", "label": "Landscape" }
+      ],
+      "default": "portrait",
+      "label": "Image ratio"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px",
+      "label": "Top padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px",
+      "label": "Bottom padding"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Glow",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "default": "Trusted skincare for lasting results",
+          "label": "Subheading"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "default": "Shop Now",
+          "label": "Link text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero category cards",
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "heading": "Glow",
+            "subheading": "Trusted skincare for lasting results"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "heading": "Renew",
+            "subheading": "Fresh formulas for every skin type"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "heading": "Protect",
+            "subheading": "Daily essentials that go the distance"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

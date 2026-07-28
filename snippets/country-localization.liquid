@@ -1,0 +1,26 @@
+{% doc %}
+  Country selector for localization.
+  Lists available countries and submits on change.
+{% enddoc %}
+
+{%- form 'localization' -%}
+  <div class="localization-form__select">
+    <label for="CountryLocalization" class="visually-hidden">
+      {{ 'localization.country_label' | t | default: 'Country/region' }}
+    </label>
+    <select
+      id="CountryLocalization"
+      name="country_code"
+      onchange="this.form.submit()"
+    >
+      {%- for country in localization.available_countries -%}
+        <option
+          value="{{ country.iso_code }}"
+          {% if country.iso_code == localization.country.iso_code %}selected{% endif %}
+        >
+          {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+        </option>
+      {%- endfor -%}
+    </select>
+  </div>
+{%- endform -%}

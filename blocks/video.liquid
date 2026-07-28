@@ -1,0 +1,75 @@
+{%- if block.settings.video != blank -%}
+  <deferred-media class="block-video" {{ block.shopify_attributes }}>
+    <button class="block-video__poster" type="button" aria-label="{{ 'sections.video.play' | t }}">
+      {%- if block.settings.cover_image != blank -%}
+        {{ block.settings.cover_image | image_url: width: 1500 | image_tag: loading: 'lazy' }}
+      {%- endif -%}
+      {%- render 'icon-play' -%}
+    </button>
+    <template>
+      {{ block.settings.video | video_tag: autoplay: true, loop: block.settings.loop, controls: true, muted: true }}
+    </template>
+  </deferred-media>
+{%- elsif block.settings.video_url != blank -%}
+  <deferred-media class="block-video" {{ block.shopify_attributes }}>
+    <button class="block-video__poster" type="button" aria-label="{{ 'sections.video.play' | t }}">
+      {%- if block.settings.cover_image != blank -%}
+        {{ block.settings.cover_image | image_url: width: 1500 | image_tag: loading: 'lazy' }}
+      {%- endif -%}
+      {%- render 'icon-play' -%}
+    </button>
+    <template>
+      {%- if block.settings.video_url.type == 'youtube' -%}
+        <iframe
+          src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}?enablejsapi=1&autoplay=1"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+          title="{{ block.settings.alt }}"
+        ></iframe>
+      {%- elsif block.settings.video_url.type == 'vimeo' -%}
+        <iframe
+          src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}?autoplay=1"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+          title="{{ block.settings.alt }}"
+        ></iframe>
+      {%- endif -%}
+    </template>
+  </deferred-media>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Video",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "label": "Video URL",
+      "accept": ["youtube", "vimeo"]
+    },
+    {
+      "type": "image_picker",
+      "id": "cover_image",
+      "label": "Cover image"
+    },
+    {
+      "type": "text",
+      "id": "alt",
+      "label": "Alt text"
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Loop video",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

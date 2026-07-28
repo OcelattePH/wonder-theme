@@ -1,0 +1,261 @@
+{% doc %}
+  Renders the product media gallery (images, video, 3D models).
+
+  @param {product} product - The product object
+  @param {array} variant_images - Images attached to variants (optional)
+  @param {string} media_size - Gallery size: small, medium, large (default: "large")
+  @param {string} media_layout - Layout: stacked, columns, thumbnail_slider (default: "stacked")
+  @param {boolean} enable_video_looping - Loop videos (default: false)
+  @param {string} enable_image_zoom - Zoom mode: lightbox, hover, none (default: "lightbox")
+  @param {string} mobile_thumbnails - Show thumbnails on mobile: hide, show (default: "hide")
+{% enddoc %}
+
+{%- if media_size == blank -%}
+  {%- assign media_size = 'large' -%}
+{%- endif -%}
+
+{%- if media_layout == blank -%}
+  {%- assign media_layout = 'stacked' -%}
+{%- endif -%}
+
+{%- if enable_image_zoom == blank -%}
+  {%- assign enable_image_zoom = 'lightbox' -%}
+{%- endif -%}
+
+{%- if mobile_thumbnails == blank -%}
+  {%- assign mobile_thumbnails = 'hide' -%}
+{%- endif -%}
+
+<div
+  class="product-media-gallery product-media-gallery--{{ media_layout }} product-media-gallery--{{ media_size }}"
+  id="MediaGallery-{{ section.id }}"
+  data-media-gallery
+>
+  {%- comment -%} Thumbnail navigation strip {%- endcomment -%}
+  {%- if product.media.size > 1 and media_layout == 'thumbnail_slider' -%}
+    <div class="product-media-gallery__thumbnails{% if mobile_thumbnails == 'hide' %} small-hide{% endif %}" id="GalleryThumbnails-{{ section.id }}">
+      {%- for media in product.media -%}
+        <button
+          class="product-media-gallery__thumbnail{% if forloop.first %} product-media-gallery__thumbnail--active{% endif %}"
+          type="button"
+          data-target="{{ media.id }}"
+          data-media-id="{{ media.id }}"
+          aria-label="{{ 'products.product.media.load_image' | t: index: forloop.index }}"
+          aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+        >
+          {%- if media.media_type == 'image' -%}
+            <img
+              src="{{ media | image_url: width: 100 }}"
+              alt="{{ media.alt | escape }}"
+              width="50"
+              height="50"
+              loading="lazy"
+            >
+          {%- elsif media.preview_image -%}
+            <img
+              src="{{ media.preview_image | image_url: width: 100 }}"
+              alt="{{ media.alt | escape }}"
+              width="50"
+              height="50"
+              loading="lazy"
+            >
+          {%- endif -%}
+          {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
+            <span class="product-media-gallery__thumbnail-badge">{% render 'icon-play' %}</span>
+          {%- elsif media.media_type == 'model' -%}
+            <span class="product-media-gallery__thumbnail-badge">3D</span>
+          {%- endif -%}
+        </button>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Main media area {%- endcomment -%}
+  <div class="product-media-gallery__viewer" id="GalleryViewer-{{ section.id }}">
+    {%- for media in product.media -%}
+      <div
+        class="product-media-gallery__media{% if forloop.first %} product-media-gallery__media--active{% endif %}"
+        data-media-id="{{ media.id }}"
+        data-media-type="{{ media.media_type }}"
+        {% unless forloop.first %}tabindex="-1"{% endunless %}
+      >
+        {%- case media.media_type -%}
+          {%- when 'image' -%}
+            {%- if enable_image_zoom == 'lightbox' -%}
+              <modal-opener data-modal="ProductMediaModal-{{ section.id }}">
+                <button
+                  class="product-media-gallery__zoom-btn"
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-label="{{ 'products.product.media.open_media' | t: index: forloop.index }}"
+                  data-media-id="{{ media.id }}"
+                >
+                  <img
+                    src="{{ media | image_url: width: 1100 }}"
+                    alt="{{ media.alt | escape }}"
+                    width="{{ media.width }}"
+                    height="{{ media.height }}"
+                    {% if forloop.first %}
+                      fetchpriority="high"
+                    {% else %}
+                      loading="lazy"
+                    {% endif %}
+                    srcset="
+                      {{ media | image_url: width: 375 }} 375w,
+                      {{ media | image_url: width: 750 }} 750w,
+                      {{ media | image_url: width: 1100 }} 1100w,
+                      {{ media | image_url: width: 1500 }} 1500w
+                    "
+                    sizes="(min-width: 990px) {% if media_size == 'small' %}38vw{% elsif media_size == 'medium' %}48vw{% else %}55vw{% endif %}, 100vw"
+                  >
+                  <span class="product-media-gallery__zoom-icon">{% render 'icon-zoom' %}</span>
+                </button>
+              </modal-opener>
+            {%- elsif enable_image_zoom == 'hover' -%}
+              <div class="product-media-gallery__hover-zoom" data-zoom-image="{{ media | image_url: width: 2400 }}">
+                <img
+                  src="{{ media | image_url: width: 1100 }}"
+                  alt="{{ media.alt | escape }}"
+                  width="{{ media.width }}"
+                  height="{{ media.height }}"
+                  {% if forloop.first %}
+                    fetchpriority="high"
+                  {% else %}
+                    loading="lazy"
+                  {% endif %}
+                  srcset="
+                    {{ media | image_url: width: 375 }} 375w,
+                    {{ media | image_url: width: 750 }} 750w,
+                    {{ media | image_url: width: 1100 }} 1100w,
+                    {{ media | image_url: width: 1500 }} 1500w
+                  "
+                  sizes="(min-width: 990px) {% if media_size == 'small' %}38vw{% elsif media_size == 'medium' %}48vw{% else %}55vw{% endif %}, 100vw"
+                >
+              </div>
+            {%- else -%}
+              <img
+                src="{{ media | image_url: width: 1100 }}"
+                alt="{{ media.alt | escape }}"
+                width="{{ media.width }}"
+                height="{{ media.height }}"
+                {% if forloop.first %}
+                  fetchpriority="high"
+                {% else %}
+                  loading="lazy"
+                {% endif %}
+                srcset="
+                  {{ media | image_url: width: 375 }} 375w,
+                  {{ media | image_url: width: 750 }} 750w,
+                  {{ media | image_url: width: 1100 }} 1100w,
+                  {{ media | image_url: width: 1500 }} 1500w
+                "
+                sizes="(min-width: 990px) {% if media_size == 'small' %}38vw{% elsif media_size == 'medium' %}48vw{% else %}55vw{% endif %}, 100vw"
+              >
+            {%- endif -%}
+
+          {%- when 'video' -%}
+            <deferred-media class="deferred-media" data-autoplay="false">
+              <button
+                id="Deferred-Poster-{{ media.id }}"
+                class="deferred-media__poster"
+                type="button"
+                aria-label="{{ 'products.product.media.play_video' | t }}"
+              >
+                {%- if media.preview_image -%}
+                  <img
+                    src="{{ media.preview_image | image_url: width: 1200 }}"
+                    alt="{{ media.alt | escape }}"
+                    width="{{ media.preview_image.width }}"
+                    height="{{ media.preview_image.height }}"
+                    loading="lazy"
+                  >
+                {%- endif -%}
+                <span class="deferred-media__play-icon">{% render 'icon-play' %}</span>
+              </button>
+              <template>
+                {{ media | video_tag: image_size: '1200x', autoplay: true, loop: enable_video_looping, controls: true, muted: false }}
+              </template>
+            </deferred-media>
+
+          {%- when 'external_video' -%}
+            <deferred-media class="deferred-media" data-autoplay="false">
+              <button
+                id="Deferred-Poster-{{ media.id }}"
+                class="deferred-media__poster"
+                type="button"
+                aria-label="{{ 'products.product.media.play_video' | t }}"
+              >
+                {%- if media.preview_image -%}
+                  <img
+                    src="{{ media.preview_image | image_url: width: 1200 }}"
+                    alt="{{ media.alt | escape }}"
+                    width="{{ media.preview_image.width }}"
+                    height="{{ media.preview_image.height }}"
+                    loading="lazy"
+                  >
+                {%- endif -%}
+                <span class="deferred-media__play-icon">{% render 'icon-play' %}</span>
+              </button>
+              <template>
+                {%- if media.host == 'youtube' -%}
+                  {{ media | external_video_url: autoplay: true, loop: enable_video_looping, playlist: media.external_id | external_video_tag: class: 'js-youtube', loading: 'lazy' }}
+                {%- else -%}
+                  {{ media | external_video_url: autoplay: true, loop: enable_video_looping | external_video_tag: class: 'js-vimeo', loading: 'lazy' }}
+                {%- endif -%}
+              </template>
+            </deferred-media>
+
+          {%- when 'model' -%}
+            <deferred-media class="deferred-media" data-autoplay="false">
+              <button
+                id="Deferred-Poster-{{ media.id }}"
+                class="deferred-media__poster"
+                type="button"
+                aria-label="{{ 'products.product.media.play_model' | t }}"
+              >
+                {%- if media.preview_image -%}
+                  <img
+                    src="{{ media.preview_image | image_url: width: 1200 }}"
+                    alt="{{ media.alt | escape }}"
+                    width="{{ media.preview_image.width }}"
+                    height="{{ media.preview_image.height }}"
+                    loading="lazy"
+                  >
+                {%- endif -%}
+                <span class="deferred-media__play-icon">3D</span>
+              </button>
+              <template>
+                {{ media | model_viewer_tag: reveal: 'interaction', toggleable: true, image_size: '1200x' }}
+              </template>
+            </deferred-media>
+        {%- endcase -%}
+      </div>
+    {%- endfor -%}
+  </div>
+
+  {%- comment -%} Lightbox modal for image zoom {%- endcomment -%}
+  {%- if enable_image_zoom == 'lightbox' -%}
+    <modal-dialog id="ProductMediaModal-{{ section.id }}" class="product-media-modal modal">
+      <div class="modal__inner" role="dialog" aria-modal="true" aria-label="{{ 'products.product.media.gallery_viewer' | t }}">
+        <button class="modal__close" data-modal-close type="button" aria-label="{{ 'accessibility.close' | t }}">
+          {% render 'icon-close' %}
+        </button>
+        <div class="product-media-modal__content">
+          {%- for media in product.media -%}
+            {%- if media.media_type == 'image' -%}
+              <div class="product-media-modal__media" data-media-id="{{ media.id }}">
+                <img
+                  src="{{ media | image_url: width: 2400 }}"
+                  alt="{{ media.alt | escape }}"
+                  width="{{ media.width }}"
+                  height="{{ media.height }}"
+                  loading="lazy"
+                >
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </modal-dialog>
+  {%- endif -%}
+</div>

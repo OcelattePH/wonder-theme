@@ -1,0 +1,10 @@
+{% doc %}
+  Placeholder SVG for missing images.
+  @param {string} name - Placeholder name (e.g., "product-1", "collection-1")
+  @param {string} class - CSS class(es) to apply
+{% enddoc %}
+
+{%- assign placeholder_name = name | default: 'product-1' -%}
+{%- assign placeholder_class = class | default: 'placeholder-svg' -%}
+
+{{ placeholder_name | placeholder_svg_tag: placeholder_class }}

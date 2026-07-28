@@ -1,0 +1,229 @@
+{% doc %}
+  Renders a product card with image, badges, quick-add, and product info.
+
+  @param {product} product - The product object (required)
+  @param {string} media_aspect_ratio - Image aspect ratio: "adapt", "portrait", "square" (default: "adapt")
+  @param {boolean} show_secondary_image - Show hover-swap image (default: false)
+  @param {boolean} show_vendor - Show product vendor (default: false)
+  @param {boolean} show_rating - Show product rating (default: false)
+  @param {string} quick_add - Quick-add mode: "none", "standard" (default: "none")
+  @param {string} section_id - Parent section ID
+  @param {boolean} lazy_load - Lazy-load images (default: true)
+  @param {number} columns - Number of grid columns, used for sizes attribute
+{% enddoc %}
+
+{%- liquid
+  assign media_aspect_ratio = media_aspect_ratio | default: 'adapt'
+  assign show_secondary_image = show_secondary_image | default: false
+  assign show_vendor = show_vendor | default: false
+  assign show_rating = show_rating | default: false
+  assign quick_add = quick_add | default: 'none'
+  assign lazy_load = lazy_load | default: true
+  assign columns = columns | default: 4
+
+  if lazy_load
+    assign loading_attr = 'lazy'
+  else
+    assign loading_attr = 'eager'
+  endif
+
+  case columns
+    when 1
+      assign sizes = '100vw'
+    when 2
+      assign sizes = '(min-width: 750px) 50vw, 100vw'
+    when 3
+      assign sizes = '(min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw'
+    else
+      assign sizes = '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw'
+  endcase
+
+  case media_aspect_ratio
+    when 'portrait'
+      assign aspect_class = 'card-product__media--portrait'
+    when 'square'
+      assign aspect_class = 'card-product__media--square'
+    else
+      assign aspect_class = 'card-product__media--adapt'
+  endcase
+-%}
+
+<div class="card-product" data-product-id="{{ product.id }}">
+  <div class="card-product__media {{ aspect_class }}">
+    {%- if product.featured_image -%}
+      <img
+        srcset="
+          {{ product.featured_image | image_url: width: 165 }} 165w,
+          {{ product.featured_image | image_url: width: 360 }} 360w,
+          {{ product.featured_image | image_url: width: 533 }} 533w,
+          {{ product.featured_image | image_url: width: 720 }} 720w,
+          {{ product.featured_image | image_url: width: 940 }} 940w,
+          {{ product.featured_image | image_url: width: 1066 }} 1066w
+        "
+        src="{{ product.featured_image | image_url: width: 600 }}"
+        sizes="{{ sizes }}"
+        alt="{{ product.featured_image.alt | escape }}"
+        width="{{ product.featured_image.width }}"
+        height="{{ product.featured_image.height }}"
+        loading="{{ loading_attr }}"
+        class="card-product__media-primary"
+      >
+
+      {%- if show_secondary_image and product.media[1] != nil -%}
+        <img
+          srcset="
+            {{ product.media[1] | image_url: width: 165 }} 165w,
+            {{ product.media[1] | image_url: width: 360 }} 360w,
+            {{ product.media[1] | image_url: width: 533 }} 533w,
+            {{ product.media[1] | image_url: width: 720 }} 720w,
+            {{ product.media[1] | image_url: width: 940 }} 940w,
+            {{ product.media[1] | image_url: width: 1066 }} 1066w
+          "
+          src="{{ product.media[1] | image_url: width: 600 }}"
+          sizes="{{ sizes }}"
+          alt="{{ product.media[1].alt | escape }}"
+          width="{{ product.media[1].width }}"
+          height="{{ product.media[1].height }}"
+          loading="lazy"
+          class="card-product__media-secondary"
+        >
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if quick_add == 'standard' -%}
+      <div class="card-product__quick-add">
+        {%- if product.variants.size == 1 and product.available -%}
+          <form
+            method="post"
+            action="/cart/add"
+            class="card-product__quick-add-form"
+            data-product-id="{{ product.id }}"
+          >
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <button
+              type="submit"
+              class="card-product__quick-add-btn card-product__quick-add-btn--atc"
+              aria-label="{{ 'products.product.add_to_cart' | t }} - {{ product.title | escape }}"
+            >
+              <span class="card-product__quick-add-text">
+                {{ 'products.product.add_to_cart' | t | default: 'Add to cart' }}
+              </span>
+              <div class="card-product__quick-add-spinner hidden">
+                {% render 'loading-spinner' %}
+              </div>
+            </button>
+          </form>
+        {%- elsif product.available -%}
+          <a
+            href="{{ product.url }}"
+            class="card-product__quick-add-btn card-product__quick-add-btn--options"
+            aria-label="{{ 'products.product.choose_options' | t | default: 'Choose options' }} - {{ product.title | escape }}"
+          >
+            {{ 'products.product.choose_options' | t | default: 'Choose options' }}
+          </a>
+        {%- else -%}
+          <button
+            type="button"
+            class="card-product__quick-add-btn card-product__quick-add-btn--soldout"
+            disabled
+            aria-label="{{ product.title | escape }} - {{ 'products.product.sold_out' | t | default: 'Sold out' }}"
+          >
+            {{ 'products.product.sold_out' | t | default: 'Sold out' }}
+          </button>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if product.compare_at_price > product.price -%}
+      {%- assign savings_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+      <span class="badge badge--sale">-{{ savings_pct }}%</span>
+    {%- endif -%}
+
+    {%- unless product.available -%}
+      <span class="badge badge--soldout">{{ 'products.product.sold_out' | t | default: 'Sold out' }}</span>
+    {%- endunless -%}
+  </div>
+
+  <div class="card-product__info">
+    {%- if show_vendor and product.vendor != blank -%}
+      <span class="card-product__vendor">{{ product.vendor }}</span>
+    {%- endif -%}
+
+    <h3 class="card-product__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+
+    {% render 'price', product: product, show_badges: false %}
+
+    {%- if show_rating and product.metafields.reviews.rating.value != nil -%}
+      <div class="card-product__rating" role="img" aria-label="{{ product.metafields.reviews.rating.value }} out of {{ product.metafields.reviews.rating.value.scale_max }} stars">
+        {%- assign rating_value = product.metafields.reviews.rating.value.rating | round: 1 -%}
+        {%- assign rating_max = product.metafields.reviews.rating.value.scale_max -%}
+        <span class="card-product__rating-stars" aria-hidden="true">
+          {%- for i in (1..5) -%}
+            {%- if rating_value >= i -%}
+              {% render 'icon-star' %}
+            {%- elsif rating_value > i | minus: 1 -%}
+              {% render 'icon-star' %}
+            {%- else -%}
+              {% render 'icon-star-empty' %}
+            {%- endif -%}
+          {%- endfor -%}
+        </span>
+        {%- if product.metafields.reviews.rating_count != nil -%}
+          <span class="card-product__rating-count">({{ product.metafields.reviews.rating_count }})</span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- if quick_add == 'standard' and product.variants.size == 1 and product.available -%}
+  <script>
+    (function() {
+      const form = document.querySelector('.card-product__quick-add-form[data-product-id="{{ product.id }}"]');
+      if (!form) return;
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const button = form.querySelector('.card-product__quick-add-btn');
+        const textEl = form.querySelector('.card-product__quick-add-text');
+        const spinnerEl = form.querySelector('.card-product__quick-add-spinner');
+        const variantId = form.querySelector('input[name="id"]').value;
+
+        button.setAttribute('disabled', '');
+        textEl.classList.add('hidden');
+        spinnerEl.classList.remove('hidden');
+
+        fetch('/cart/add.js', {
+          ...fetchConfig('json'),
+          body: JSON.stringify({
+            items: [{ id: parseInt(variantId, 10), quantity: 1 }]
+          })
+        })
+          .then(function(response) {
+            if (!response.ok) throw new Error('Add to cart failed');
+            return response.json();
+          })
+          .then(function(data) {
+            publish(PUB_SUB_EVENTS.cartUpdate, {
+              source: 'card-product',
+              productId: {{ product.id }},
+              variantId: parseInt(variantId, 10),
+              cart: data
+            });
+          })
+          .catch(function(error) {
+            console.error('Quick add error:', error);
+          })
+          .finally(function() {
+            button.removeAttribute('disabled');
+            textEl.classList.remove('hidden');
+            spinnerEl.classList.add('hidden');
+          });
+      });
+    })();
+  </script>
+{%- endif -%}
