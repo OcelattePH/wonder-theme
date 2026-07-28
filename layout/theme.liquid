@@ -78,6 +78,44 @@
       {{ body_font_bold_italic | font_face: font_display: 'swap' }}
       {{ settings.type_header_font | font_face: font_display: 'swap' }}
 
+      {%- if settings.custom_heading_font_enabled and settings.custom_heading_font_file != blank -%}
+        @font-face {
+          font-family: '{{ settings.custom_heading_font_name | default: "Custom Heading" }}';
+          src: url({{ settings.custom_heading_font_file | asset_url }}) format('woff2');
+          font-weight: {{ settings.custom_heading_font_weight | default: '400' }};
+          font-style: normal;
+          font-display: swap;
+        }
+        {%- if settings.custom_heading_font_file_bold != blank -%}
+          @font-face {
+            font-family: '{{ settings.custom_heading_font_name | default: "Custom Heading" }}';
+            src: url({{ settings.custom_heading_font_file_bold | asset_url }}) format('woff2');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+          }
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- if settings.custom_body_font_enabled and settings.custom_body_font_file != blank -%}
+        @font-face {
+          font-family: '{{ settings.custom_body_font_name | default: "Custom Body" }}';
+          src: url({{ settings.custom_body_font_file | asset_url }}) format('woff2');
+          font-weight: {{ settings.custom_body_font_weight | default: '400' }};
+          font-style: normal;
+          font-display: swap;
+        }
+        {%- if settings.custom_body_font_file_bold != blank -%}
+          @font-face {
+            font-family: '{{ settings.custom_body_font_name | default: "Custom Body" }}';
+            src: url({{ settings.custom_body_font_file_bold | asset_url }}) format('woff2');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+          }
+        {%- endif -%}
+      {%- endif -%}
+
       {% for scheme in settings.color_schemes -%}
         {% assign scheme_classes = scheme_classes | append: ', .color-' | append: scheme.id %}
         {% if forloop.index == 1 -%}
@@ -135,6 +173,18 @@
 
         --font-body-scale: {{ settings.body_scale | divided_by: 100.0 }};
         --font-heading-scale: {{ settings.heading_scale | times: 1.0 | divided_by: settings.body_scale }};
+
+        {%- if settings.custom_heading_font_enabled and settings.custom_heading_font_name != blank -%}
+          --font-heading-family: '{{ settings.custom_heading_font_name }}', serif;
+          --font-heading-style: normal;
+          --font-heading-weight: {{ settings.custom_heading_font_weight | default: '400' }};
+        {%- endif -%}
+
+        {%- if settings.custom_body_font_enabled and settings.custom_body_font_name != blank -%}
+          --font-body-family: '{{ settings.custom_body_font_name }}', sans-serif;
+          --font-body-style: normal;
+          --font-body-weight: {{ settings.custom_body_font_weight | default: '400' }};
+        {%- endif -%}
 
         --media-padding: {{ settings.media_padding }}px;
         --media-border-opacity: {{ settings.media_border_opacity | divided_by: 100.0 }};

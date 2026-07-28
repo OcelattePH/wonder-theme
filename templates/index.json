@@ -31,7 +31,7 @@
       },
       "block_order": ["heading", "text", "button"],
       "settings": {
-        "image_overlay_opacity": 40,
+        "image_overlay_opacity": 30,
         "image_height": "large",
         "desktop_content_position": "middle-center",
         "show_text_box": false,
@@ -43,10 +43,82 @@
         "show_text_below": false
       }
     },
+    "press_logos": {
+      "type": "press-logos",
+      "blocks": {
+        "logo_1": { "type": "logo", "settings": { "name": "Vogue" } },
+        "logo_2": { "type": "logo", "settings": { "name": "Elle" } },
+        "logo_3": { "type": "logo", "settings": { "name": "Forbes" } },
+        "logo_4": { "type": "logo", "settings": { "name": "Cosmopolitan" } },
+        "logo_5": { "type": "logo", "settings": { "name": "Allure" } }
+      },
+      "block_order": ["logo_1", "logo_2", "logo_3", "logo_4", "logo_5"],
+      "settings": {
+        "heading": "As seen in",
+        "color_scheme": "scheme-1",
+        "padding_top": 24,
+        "padding_bottom": 24
+      }
+    },
+    "category_cards": {
+      "type": "hero-category-cards",
+      "blocks": {
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "heading": "Skincare",
+            "subheading": "Nourish your natural glow",
+            "link_text": "Shop Now",
+            "link": ""
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "heading": "Haircare",
+            "subheading": "Stronger, healthier hair",
+            "link_text": "Shop Now",
+            "link": ""
+          }
+        },
+        "card_3": {
+          "type": "card",
+          "settings": {
+            "heading": "Body Care",
+            "subheading": "Clean, everyday essentials",
+            "link_text": "Shop Now",
+            "link": ""
+          }
+        }
+      },
+      "block_order": ["card_1", "card_2", "card_3"],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "columns": 3,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "marquee_band": {
+      "type": "scrolling-marquee",
+      "blocks": {
+        "text_1": { "type": "text", "settings": { "text": "Clean Beauty" } },
+        "text_2": { "type": "text", "settings": { "text": "Cruelty Free" } },
+        "text_3": { "type": "text", "settings": { "text": "Natural Ingredients" } },
+        "text_4": { "type": "text", "settings": { "text": "Sustainable" } }
+      },
+      "block_order": ["text_1", "text_2", "text_3", "text_4"],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "speed": 30,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
     "best_sellers": {
       "type": "featured-collection",
       "settings": {
-        "title": "Best Sellers",
+        "title": "Our Bestsellers",
         "heading_size": "h1",
         "description": "",
         "show_description": false,
@@ -57,13 +129,13 @@
         "color_scheme": "scheme-1",
         "full_width": false,
         "show_view_all": true,
-        "view_all_style": "solid",
+        "view_all_style": "link",
         "enable_desktop_slider": false,
         "swipe_on_mobile": true,
-        "image_ratio": "adapt",
+        "image_ratio": "portrait",
         "image_shape": "default",
         "show_secondary_image": true,
-        "show_vendor": false,
+        "show_vendor": true,
         "show_rating": false,
         "quick_add": "standard",
         "columns_mobile": "2",
@@ -77,21 +149,21 @@
         "heading": {
           "type": "heading",
           "settings": {
-            "heading": "Our Story",
+            "heading": "Where Science Meets Nature",
             "heading_size": "h1"
           }
         },
         "text": {
           "type": "text",
           "settings": {
-            "text": "<p>We believe in the power of nature. Every product is carefully crafted with sustainably sourced botanical ingredients, designed to nourish your skin from the outside in.</p>",
+            "text": "<p>We blend the finest natural ingredients with modern formulation science, crafting rituals that nourish both skin and soul. Every product is a promise of purity, efficacy, and care.</p>",
             "text_style": "body"
           }
         },
         "button": {
           "type": "button",
           "settings": {
-            "button_label": "Learn More",
+            "button_label": "Our Story",
             "button_link": ""
           }
         }
@@ -103,12 +175,67 @@
         "desktop_content_position": "middle",
         "desktop_content_alignment": "left",
         "content_layout": "no-overlap",
-        "section_color_scheme": "scheme-5",
-        "color_scheme": "scheme-5",
+        "section_color_scheme": "scheme-2",
+        "color_scheme": "scheme-2",
         "image_behavior": "none",
         "mobile_content_alignment": "left",
-        "padding_top": 36,
-        "padding_bottom": 36
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "manifesto": {
+      "type": "rich-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "What We Make, We Stand By",
+            "heading_size": "h0"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Crafted with care, backed by science. Honest formulas that work, so you never have to second-guess what touches your skin.</p>"
+          }
+        }
+      },
+      "block_order": ["heading", "text"],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "scheme-5",
+        "full_width": true,
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "new_arrivals": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "New Arrivals",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "link",
+        "enable_desktop_slider": false,
+        "swipe_on_mobile": true,
+        "image_ratio": "portrait",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": true,
+        "show_rating": false,
+        "quick_add": "standard",
+        "columns_mobile": "2",
+        "padding_top": 52,
+        "padding_bottom": 52
       }
     },
     "trust_badges": {
@@ -141,48 +268,39 @@
         "badge_4": {
           "type": "icon_item",
           "settings": {
-            "icon": "truck",
-            "heading": "Free Shipping",
-            "text": "On orders over $50"
+            "icon": "checkmark",
+            "heading": "Clean",
+            "text": "Transparent ingredients"
           }
         }
       },
       "block_order": ["badge_1", "badge_2", "badge_3", "badge_4"],
       "settings": {
         "color_scheme": "scheme-2",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "testimonial_1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "The best skincare I've ever used. My skin has never looked this radiant.",
+            "author": "Sarah M.",
+            "rating": 5
+          }
+        }
+      },
+      "block_order": ["testimonial_1"],
+      "settings": {
+        "color_scheme": "scheme-1",
         "padding_top": 40,
         "padding_bottom": 40
       }
     },
-    "new_arrivals": {
-      "type": "featured-collection",
-      "settings": {
-        "title": "New Arrivals",
-        "heading_size": "h1",
-        "description": "",
-        "show_description": false,
-        "description_style": "body",
-        "collection": "",
-        "products_to_show": 4,
-        "columns_desktop": 4,
-        "color_scheme": "scheme-1",
-        "full_width": false,
-        "show_view_all": true,
-        "view_all_style": "solid",
-        "enable_desktop_slider": false,
-        "swipe_on_mobile": true,
-        "image_ratio": "adapt",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add": "standard",
-        "columns_mobile": "2",
-        "padding_top": 52,
-        "padding_bottom": 52
-      }
-    },
-    "newsletter_cta": {
+    "newsletter_heading": {
       "type": "rich-text",
       "blocks": {
         "heading": {
@@ -203,9 +321,9 @@
       "settings": {
         "desktop_content_position": "center",
         "content_alignment": "center",
-        "color_scheme": "scheme-5",
+        "color_scheme": "scheme-2",
         "full_width": true,
-        "padding_top": 40,
+        "padding_top": 48,
         "padding_bottom": 0
       }
     },
@@ -219,7 +337,7 @@
       },
       "block_order": ["email"],
       "settings": {
-        "color_scheme": "scheme-5",
+        "color_scheme": "scheme-2",
         "full_width": true,
         "padding_top": 0,
         "padding_bottom": 52
@@ -228,11 +346,16 @@
   },
   "order": [
     "hero_banner",
+    "press_logos",
+    "category_cards",
+    "marquee_band",
     "best_sellers",
     "brand_story",
-    "trust_badges",
+    "manifesto",
     "new_arrivals",
-    "newsletter_cta",
+    "trust_badges",
+    "testimonials",
+    "newsletter_heading",
     "newsletter"
   ]
 }

@@ -147,6 +147,103 @@
     ]
   },
   {
+    "name": "Custom fonts",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Upload custom font files (.woff2) to your theme Assets folder, then enter the filenames below. These override the Shopify font picker selections above."
+      },
+      {
+        "type": "header",
+        "content": "Custom heading font"
+      },
+      {
+        "type": "checkbox",
+        "id": "custom_heading_font_enabled",
+        "label": "Use custom heading font",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "custom_heading_font_file",
+        "label": "Heading font filename",
+        "info": "e.g. my-heading-font.woff2 (must be uploaded to Assets)",
+        "placeholder": "heading-font.woff2"
+      },
+      {
+        "type": "text",
+        "id": "custom_heading_font_name",
+        "label": "Heading font family name",
+        "info": "The CSS font-family name to use",
+        "placeholder": "My Heading Font"
+      },
+      {
+        "type": "select",
+        "id": "custom_heading_font_weight",
+        "label": "Heading font weight",
+        "options": [
+          { "value": "300", "label": "Light (300)" },
+          { "value": "400", "label": "Regular (400)" },
+          { "value": "500", "label": "Medium (500)" },
+          { "value": "600", "label": "Semi-bold (600)" },
+          { "value": "700", "label": "Bold (700)" }
+        ],
+        "default": "400"
+      },
+      {
+        "type": "text",
+        "id": "custom_heading_font_file_bold",
+        "label": "Heading font bold filename (optional)",
+        "info": "e.g. my-heading-font-bold.woff2",
+        "placeholder": "heading-font-bold.woff2"
+      },
+      {
+        "type": "header",
+        "content": "Custom body font"
+      },
+      {
+        "type": "checkbox",
+        "id": "custom_body_font_enabled",
+        "label": "Use custom body font",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "custom_body_font_file",
+        "label": "Body font filename",
+        "info": "e.g. my-body-font.woff2 (must be uploaded to Assets)",
+        "placeholder": "body-font.woff2"
+      },
+      {
+        "type": "text",
+        "id": "custom_body_font_name",
+        "label": "Body font family name",
+        "info": "The CSS font-family name to use",
+        "placeholder": "My Body Font"
+      },
+      {
+        "type": "select",
+        "id": "custom_body_font_weight",
+        "label": "Body font weight",
+        "options": [
+          { "value": "300", "label": "Light (300)" },
+          { "value": "400", "label": "Regular (400)" },
+          { "value": "500", "label": "Medium (500)" },
+          { "value": "600", "label": "Semi-bold (600)" },
+          { "value": "700", "label": "Bold (700)" }
+        ],
+        "default": "400"
+      },
+      {
+        "type": "text",
+        "id": "custom_body_font_file_bold",
+        "label": "Body font bold filename (optional)",
+        "info": "e.g. my-body-font-bold.woff2",
+        "placeholder": "body-font-bold.woff2"
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.layout.name",
     "settings": [
       {
