@@ -2,12 +2,24 @@
   "sections": {
     "main": {
       "type": "main-page",
-      "settings": {}
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     },
-    "contact": {
+    "form": {
       "type": "contact-form",
-      "settings": {}
+      "settings": {
+        "heading": "",
+        "heading_size": "h1",
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
-  "order": ["main", "contact"]
+  "order": [
+    "main",
+    "form"
+  ]
 }

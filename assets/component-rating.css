@@ -1,107 +1,64 @@
-/*
- * component-rating.css -- Star rating display
- * Uses --rating custom property (0-5) to fill stars proportionally.
- */
+.product--no-media .rating-wrapper {
+  text-align: center;
+}
 
 .rating {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
+  display: inline-block;
+  margin: 0;
+}
+
+.product .rating-star {
+  --letter-spacing: 0.8;
+  --font-size: 1.7;
+}
+
+.card-wrapper .rating-star {
+  --letter-spacing: 0.7;
+  --font-size: 1.4;
+}
+
+.rating-star {
+  --color-rating-star: rgb(var(--color-foreground));
+  --percent: calc(
+    (
+        var(--rating) / var(--rating-max) + var(--rating-decimal) * var(--font-size) /
+          (var(--rating-max) * (var(--letter-spacing) + var(--font-size)))
+      ) * 100%
+  );
+  letter-spacing: calc(var(--letter-spacing) * 1rem);
+  font-size: calc(var(--font-size) * 1rem);
   line-height: 1;
+  display: inline-block;
+  font-family: Times;
+  margin: 0;
 }
 
-/* Stars container
-   ========================================================================== */
-
-.rating__stars {
-  --star-size: 1.6rem;
-  --star-color: rgb(var(--color-foreground));
-  --star-empty: rgba(var(--color-foreground), 0.15);
-  --percent: calc(var(--rating, 0) / 5 * 100%);
-
-  position: relative;
-  display: inline-flex;
-  gap: 0.2rem;
-  font-size: var(--star-size);
-  letter-spacing: 0.2rem;
-  white-space: nowrap;
+.rating-star::before {
+  content: '★★★★★';
+  background: linear-gradient(
+    90deg,
+    var(--color-rating-star) var(--percent),
+    rgba(var(--color-foreground), 0.15) var(--percent)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.rating__stars::before,
-.rating__stars::after {
-  content: '\2605\2605\2605\2605\2605';
-  display: block;
+.rating-text {
+  display: none;
 }
 
-/* Empty stars (background layer) */
-.rating__stars::before {
-  color: var(--star-empty);
+.rating-count {
+  display: inline-block;
+  margin: 0;
 }
 
-/* Filled stars (foreground layer, clipped) */
-.rating__stars::after {
-  position: absolute;
-  top: 0;
-  left: 0;
-  color: var(--star-color);
-  clip-path: inset(0 calc(100% - var(--percent)) 0 0);
-}
+@media (forced-colors: active) {
+  .rating {
+    display: none;
+  }
 
-/* Visual-only star wrapper for SVG-based ratings */
-.rating__star {
-  display: inline-flex;
-  width: var(--star-size);
-  height: var(--star-size);
-}
-
-.rating__star svg {
-  width: 100%;
-  height: 100%;
-  fill: var(--star-empty);
-}
-
-.rating__star--full svg {
-  fill: var(--star-color);
-}
-
-.rating__star--half svg {
-  fill: var(--star-color);
-  clip-path: inset(0 50% 0 0);
-}
-
-/* Count text
-   ========================================================================== */
-
-.rating__count {
-  font-size: 1.3rem;
-  color: rgba(var(--color-foreground), 0.6);
-}
-
-.rating__count a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 0.2rem;
-}
-
-.rating__count a:hover {
-  color: rgb(var(--color-foreground));
-}
-
-/* Sizes
-   ========================================================================== */
-
-.rating--small .rating__stars {
-  --star-size: 1.2rem;
-}
-
-.rating--small .rating__count {
-  font-size: 1.1rem;
-}
-
-.rating--large .rating__stars {
-  --star-size: 2rem;
-}
-
-.rating--large .rating__count {
-  font-size: 1.5rem;
+  .rating-text {
+    display: block;
+  }
 }

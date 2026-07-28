@@ -1,67 +1,45 @@
 class SearchForm extends HTMLElement {
   constructor() {
     super();
-
     this.input = this.querySelector('input[type="search"]');
-    this.form = this.querySelector('form');
-    this.resetButton = this.querySelector('[data-search-reset]');
-  }
-
-  connectedCallback() {
-    if (this.form) {
-      this.form.addEventListener('submit', this.onSubmit.bind(this));
-    }
+    this.resetButton = this.querySelector('button[type="reset"]');
 
     if (this.input) {
-      this.input.addEventListener('input', this.onInput.bind(this));
-      this.input.addEventListener('focus', this.onFocus.bind(this));
-    }
-
-    if (this.resetButton) {
-      this.resetButton.addEventListener('click', this.onReset.bind(this));
-    }
-  }
-
-  onSubmit(event) {
-    if (!this.input.value.trim()) {
-      event.preventDefault();
-      this.input.focus();
-      return;
-    }
-
-    const predictiveSearch = this.querySelector('predictive-search');
-    if (predictiveSearch && predictiveSearch.isOpen) {
-      predictiveSearch.close();
-    }
-  }
-
-  onInput() {
-    this.toggleResetButton();
-  }
-
-  onFocus() {
-    this.input.select();
-  }
-
-  onReset(event) {
-    event.preventDefault();
-    this.input.value = '';
-    this.input.focus();
-    this.toggleResetButton();
-
-    const predictiveSearch = this.querySelector('predictive-search');
-    if (predictiveSearch) {
-      predictiveSearch.close();
+      this.input.form.addEventListener('reset', this.onFormReset.bind(this));
+      this.input.addEventListener(
+        'input',
+        debounce((event) => {
+          this.onChange(event);
+        }, 300).bind(this)
+      );
     }
   }
 
   toggleResetButton() {
-    if (!this.resetButton) return;
-
-    if (this.input.value.length > 0) {
+    const resetIsHidden = this.resetButton.classList.contains('hidden');
+    if (this.input.value.length > 0 && resetIsHidden) {
       this.resetButton.classList.remove('hidden');
-    } else {
+    } else if (this.input.value.length === 0 && !resetIsHidden) {
       this.resetButton.classList.add('hidden');
+    }
+  }
+
+  onChange() {
+    this.toggleResetButton();
+  }
+
+  shouldResetForm() {
+    return !document.querySelector('[aria-selected="true"] a');
+  }
+
+  onFormReset(event) {
+    // Prevent default so the form reset doesn't set the value gotten from the url on page load
+    event.preventDefault();
+    // Don't reset if the user has selected an element on the predictive search dropdown
+    if (this.shouldResetForm()) {
+      this.input.value = '';
+      this.input.focus();
+      this.toggleResetButton();
     }
   }
 }

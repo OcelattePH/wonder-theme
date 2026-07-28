@@ -1,170 +1,445 @@
-/*
- * product-info.js
- * Custom element <product-info> that handles variant change detection,
- * section re-rendering, and DOM updates for price / availability / media / SKU.
- * Depends on: constants.js, pubsub.js, global.js
- */
-
 if (!customElements.get('product-info')) {
-  class ProductInfo extends HTMLElement {
-    constructor() {
-      super();
-      this.sectionId = this.dataset.section;
-      this.productUrl = this.dataset.url;
-      this.onVariantChangeBound = this.onVariantChange.bind(this);
-    }
+  customElements.define(
+    'product-info',
+    class ProductInfo extends HTMLElement {
+      quantityInput = undefined;
+      quantityForm = undefined;
+      onVariantChangeUnsubscriber = undefined;
+      cartUpdateUnsubscriber = undefined;
+      abortController = undefined;
+      pendingRequestUrl = null;
+      preProcessHtmlCallbacks = [];
+      postProcessHtmlCallbacks = [];
 
-    connectedCallback() {
-      this.unsubscribe = subscribe(PUB_SUB_EVENTS.variantChange, this.onVariantChangeBound);
-    }
+      constructor() {
+        super();
 
-    disconnectedCallback() {
-      if (this.unsubscribe) this.unsubscribe();
-    }
-
-    onVariantChange({ variant, sectionId }) {
-      if (sectionId !== this.sectionId) return;
-      if (!variant) {
-        this.setUnavailable();
-        return;
+        this.quantityInput = this.querySelector('.quantity__input');
       }
 
-      this.updateURL(variant);
-      this.fetchAndRender(variant);
-    }
+      connectedCallback() {
+        this.initializeProductSwapUtility();
 
-    updateURL(variant) {
-      if (!variant) return;
-      const url = new URL(window.location.href);
-      url.searchParams.set('variant', variant.id);
-      window.history.replaceState({}, '', url.toString());
-    }
+        this.onVariantChangeUnsubscriber = subscribe(
+          PUB_SUB_EVENTS.optionValueSelectionChange,
+          this.handleOptionValueChange.bind(this)
+        );
 
-    async fetchAndRender(variant) {
-      const url = `${this.productUrl}?variant=${variant.id}&section_id=${this.sectionId}`;
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`Section fetch failed: ${response.status}`);
-        const html = await response.text();
-        this.renderSectionFromHTML(html, variant);
-      } catch (error) {
-        console.error('Error rendering product section:', error);
-      }
-    }
-
-    renderSectionFromHTML(html, variant) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-
-      // Update price
-      this.updateBlock(doc, `price-${this.sectionId}`);
-
-      // Update SKU
-      this.updateBlock(doc, `Sku-${this.sectionId}`);
-
-      // Update inventory
-      this.updateBlock(doc, `Inventory-${this.sectionId}`);
-
-      // Update buy buttons
-      this.updateBlock(doc, `BuyButtons-${this.sectionId}`);
-
-      // Update pickup availability
-      this.updatePickupAvailability(variant);
-
-      // Update active media
-      this.updateMedia(variant);
-
-      // Publish section refresh
-      publish(PUB_SUB_EVENTS.sectionRefreshed, {
-        source: this,
-        sectionId: this.sectionId,
-        variant,
-      });
-    }
-
-    updateBlock(doc, id) {
-      const source = doc.getElementById(id);
-      const target = document.getElementById(id);
-      if (source && target) {
-        target.innerHTML = source.innerHTML;
-      }
-    }
-
-    updatePickupAvailability(variant) {
-      const pickupEl = this.querySelector('pickup-availability');
-      if (!pickupEl) return;
-
-      if (variant.available) {
-        pickupEl.setAttribute('available', '');
-      } else {
-        pickupEl.removeAttribute('available');
+        this.initQuantityHandlers();
+        this.dispatchEvent(new CustomEvent('product-info:loaded', { bubbles: true }));
       }
 
-      // Re-fetch pickup availability for the new variant
-      const rootUrl = pickupEl.dataset.rootUrl || '';
-      pickupEl.dataset.variantId = variant.id;
+      addPreProcessCallback(callback) {
+        this.preProcessHtmlCallbacks.push(callback);
+      }
 
-      fetch(`${rootUrl}/variants/${variant.id}/?section_id=pickup-availability`)
-        .then((res) => res.text())
-        .then((html) => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const freshEl = doc.querySelector('pickup-availability-preview');
-          const currentPreview = pickupEl.querySelector('pickup-availability-preview');
-          if (freshEl && currentPreview) {
-            currentPreview.innerHTML = freshEl.innerHTML;
-          } else if (freshEl) {
-            pickupEl.appendChild(freshEl);
-          } else if (currentPreview) {
-            currentPreview.remove();
+      initQuantityHandlers() {
+        if (!this.quantityInput) return;
+
+        this.quantityForm = this.querySelector('.product-form__quantity');
+        if (!this.quantityForm) return;
+
+        this.setQuantityBoundries();
+        if (!this.dataset.originalSection) {
+          this.cartUpdateUnsubscriber = subscribe(PUB_SUB_EVENTS.cartUpdate, this.fetchQuantityRules.bind(this));
+        }
+      }
+
+      disconnectedCallback() {
+        this.onVariantChangeUnsubscriber();
+        this.cartUpdateUnsubscriber?.();
+      }
+
+      initializeProductSwapUtility() {
+        this.preProcessHtmlCallbacks.push((html) =>
+          html.querySelectorAll('.scroll-trigger').forEach((element) => element.classList.add('scroll-trigger--cancel'))
+        );
+        this.postProcessHtmlCallbacks.push((newNode) => {
+          window?.Shopify?.PaymentButton?.init();
+          window?.ProductModel?.loadShopifyXR();
+        });
+      }
+
+      handleOptionValueChange({ data: { event, target, selectedOptionValues } }) {
+        if (!this.contains(event.target)) return;
+
+        this.resetProductFormState();
+
+        const productUrl = target.dataset.productUrl || this.pendingRequestUrl || this.dataset.url;
+        this.pendingRequestUrl = productUrl;
+        const shouldSwapProduct = this.dataset.url !== productUrl;
+        const shouldFetchFullPage = this.dataset.updateUrl === 'true' && shouldSwapProduct;
+
+        this.renderProductInfo({
+          requestUrl: this.buildRequestUrlWithParams(productUrl, selectedOptionValues, shouldFetchFullPage),
+          targetId: target.id,
+          callback: shouldSwapProduct
+            ? this.handleSwapProduct(productUrl, shouldFetchFullPage)
+            : this.handleUpdateProductInfo(productUrl),
+        });
+      }
+
+      resetProductFormState() {
+        const productForm = this.productForm;
+        productForm?.toggleSubmitButton(true);
+        productForm?.handleErrorMessage();
+      }
+
+      handleSwapProduct(productUrl, updateFullPage) {
+        return (html) => {
+          this.productModal?.remove();
+
+          const selector = updateFullPage ? "product-info[id^='MainProduct']" : 'product-info';
+          const sourceProductInfo = html.querySelector(selector);
+          const variant = this.getSelectedVariant(sourceProductInfo);
+          this.variantSelectors?.resolvePendingSelectPromise(variant, this.getVariantSelects(sourceProductInfo));
+          this.updateURL(productUrl, variant?.id);
+
+          if (updateFullPage) {
+            document.querySelector('head title').innerHTML = html.querySelector('head title').innerHTML;
+
+            HTMLUpdateUtility.viewTransition(
+              document.querySelector('main'),
+              html.querySelector('main'),
+              this.preProcessHtmlCallbacks,
+              this.postProcessHtmlCallbacks
+            );
+          } else {
+            HTMLUpdateUtility.viewTransition(
+              this,
+              html.querySelector('product-info'),
+              this.preProcessHtmlCallbacks,
+              this.postProcessHtmlCallbacks
+            );
           }
-        })
-        .catch((err) => console.error('Pickup availability fetch error:', err));
-    }
+        };
+      }
 
-    updateMedia(variant) {
-      if (!variant.featured_media) return;
+      renderProductInfo({ requestUrl, targetId, callback }) {
+        this.abortController?.abort();
+        this.abortController = new AbortController();
 
-      const mediaId = variant.featured_media.id;
-      const mediaGallery = this.querySelector('[data-media-gallery]');
-      if (!mediaGallery) return;
+        fetch(requestUrl, { signal: this.abortController.signal })
+          .then((response) => response.text())
+          .then((responseText) => {
+            this.pendingRequestUrl = null;
+            const html = new DOMParser().parseFromString(responseText, 'text/html');
+            callback(html);
+            // set focus to last clicked option value
+            document.querySelector(`#${targetId}`)?.focus();
+          })
+          .catch((error) => {
+            if (error.name === 'AbortError') {
+              console.log('Fetch aborted by user');
+            } else {
+              console.error(error);
+            }
+            this.variantSelectors?.rejectPendingSelectPromise(error);
+          });
+      }
 
-      // Update active state on media items
-      const mediaItems = mediaGallery.querySelectorAll('[data-media-id]');
-      mediaItems.forEach((item) => {
-        const isTarget = String(item.dataset.mediaId) === String(mediaId);
-        if (item.classList.contains('product-media-gallery__media')) {
-          item.classList.toggle('product-media-gallery__media--active', isTarget);
+      parseJsonScript(parent, selector) {
+        try {
+          return JSON.parse(parent?.querySelector(selector)?.textContent);
+        } catch {
+          return null;
         }
-        if (item.classList.contains('product-media-gallery__thumbnail')) {
-          item.classList.toggle('product-media-gallery__thumbnail--active', isTarget);
-          item.setAttribute('aria-current', isTarget ? 'true' : 'false');
-        }
-      });
+      }
 
-      // Scroll to active media in stacked layout
-      const activeMedia = mediaGallery.querySelector(
-        `.product-media-gallery__media[data-media-id="${mediaId}"]`
-      );
-      if (activeMedia) {
-        activeMedia.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      getVariantSelects(queryRoot) {
+        return queryRoot?.querySelector('variant-selects');
+      }
+
+      getSelectedVariant(productInfoNode) {
+        return this.parseJsonScript(this.getVariantSelects(productInfoNode), '[data-selected-variant]');
+      }
+
+      buildRequestUrlWithParams(url, optionValues, shouldFetchFullPage = false) {
+        const params = [];
+
+        !shouldFetchFullPage && params.push(`section_id=${this.sectionId}`);
+
+        if (optionValues.length) {
+          params.push(`option_values=${optionValues.join(',')}`);
+        }
+
+        return `${url}?${params.join('&')}`;
+      }
+
+      updateOptionValues(html) {
+        const variantSelects = html.querySelector('variant-selects');
+        if (variantSelects) {
+          HTMLUpdateUtility.viewTransition(this.variantSelectors, variantSelects, this.preProcessHtmlCallbacks);
+        }
+      }
+
+      handleUpdateProductInfo(productUrl) {
+        return (html) => {
+          const sourceVariantSelects = this.getVariantSelects(html);
+          const variant = this.getSelectedVariant(html);
+
+          // Resolve product:select promise before updateOptionValues replaces the variant-selects DOM element
+          this.variantSelectors?.resolvePendingSelectPromise(variant, sourceVariantSelects);
+
+          this.pickupAvailability?.update(variant);
+          this.updateOptionValues(html);
+          this.updateURL(productUrl, variant?.id);
+          this.updateVariantInputs(variant?.id);
+
+          if (!variant) {
+            this.setUnavailable();
+            return;
+          }
+
+          this.updateMedia(html, variant?.featured_media?.id);
+
+          const updateSourceFromDestination = (id, shouldHide = (source) => false) => {
+            const source = html.getElementById(`${id}-${this.sectionId}`);
+            const destination = this.querySelector(`#${id}-${this.dataset.section}`);
+            if (source && destination) {
+              destination.innerHTML = source.innerHTML;
+              destination.classList.toggle('hidden', shouldHide(source));
+            }
+          };
+
+          updateSourceFromDestination('price');
+          updateSourceFromDestination('Sku', ({ classList }) => classList.contains('hidden'));
+          updateSourceFromDestination('Inventory', ({ innerText }) => innerText === '');
+          updateSourceFromDestination('Volume');
+          updateSourceFromDestination('Price-Per-Item', ({ classList }) => classList.contains('hidden'));
+
+          this.updateQuantityRules(this.sectionId, html);
+          this.querySelector(`#Quantity-Rules-${this.dataset.section}`)?.classList.remove('hidden');
+          this.querySelector(`#Volume-Note-${this.dataset.section}`)?.classList.remove('hidden');
+
+          this.productForm?.toggleSubmitButton(
+            html.getElementById(`ProductSubmitButton-${this.sectionId}`)?.hasAttribute('disabled') ?? true,
+            window.variantStrings.soldOut
+          );
+
+          publish(PUB_SUB_EVENTS.variantChange, {
+            data: {
+              sectionId: this.sectionId,
+              html,
+              variant,
+            },
+          });
+        };
+      }
+
+      updateVariantInputs(variantId) {
+        this.querySelectorAll(
+          `#product-form-${this.dataset.section}, #product-form-installment-${this.dataset.section}`
+        ).forEach((productForm) => {
+          const input = productForm.querySelector('input[name="id"]');
+          input.value = variantId ?? '';
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+      }
+
+      updateURL(url, variantId) {
+        this.querySelector('share-button')?.updateUrl(
+          `${window.shopUrl}${url}${variantId ? `?variant=${variantId}` : ''}`
+        );
+
+        if (this.dataset.updateUrl === 'false') return;
+        window.history.replaceState({}, '', `${url}${variantId ? `?variant=${variantId}` : ''}`);
+      }
+
+      setUnavailable() {
+        this.productForm?.toggleSubmitButton(true, window.variantStrings.unavailable);
+
+        const selectors = ['price', 'Inventory', 'Sku', 'Price-Per-Item', 'Volume-Note', 'Volume', 'Quantity-Rules']
+          .map((id) => `#${id}-${this.dataset.section}`)
+          .join(', ');
+        document.querySelectorAll(selectors).forEach(({ classList }) => classList.add('hidden'));
+      }
+
+      updateMedia(html, variantFeaturedMediaId) {
+        if (!variantFeaturedMediaId) return;
+
+        const mediaGallerySource = this.querySelector('media-gallery ul');
+        const mediaGalleryDestination = html.querySelector(`media-gallery ul`);
+
+        const refreshSourceData = () => {
+          if (this.hasAttribute('data-zoom-on-hover')) enableZoomOnHover(2);
+          const mediaGallerySourceItems = Array.from(mediaGallerySource.querySelectorAll('li[data-media-id]'));
+          const sourceSet = new Set(mediaGallerySourceItems.map((item) => item.dataset.mediaId));
+          const sourceMap = new Map(
+            mediaGallerySourceItems.map((item, index) => [item.dataset.mediaId, { item, index }])
+          );
+          return [mediaGallerySourceItems, sourceSet, sourceMap];
+        };
+
+        if (mediaGallerySource && mediaGalleryDestination) {
+          let [mediaGallerySourceItems, sourceSet, sourceMap] = refreshSourceData();
+          const mediaGalleryDestinationItems = Array.from(
+            mediaGalleryDestination.querySelectorAll('li[data-media-id]')
+          );
+          const destinationSet = new Set(mediaGalleryDestinationItems.map(({ dataset }) => dataset.mediaId));
+          let shouldRefresh = false;
+
+          // add items from new data not present in DOM
+          for (let i = mediaGalleryDestinationItems.length - 1; i >= 0; i--) {
+            if (!sourceSet.has(mediaGalleryDestinationItems[i].dataset.mediaId)) {
+              mediaGallerySource.prepend(mediaGalleryDestinationItems[i]);
+              shouldRefresh = true;
+            }
+          }
+
+          // remove items from DOM not present in new data
+          for (let i = 0; i < mediaGallerySourceItems.length; i++) {
+            if (!destinationSet.has(mediaGallerySourceItems[i].dataset.mediaId)) {
+              mediaGallerySourceItems[i].remove();
+              shouldRefresh = true;
+            }
+          }
+
+          // refresh
+          if (shouldRefresh) [mediaGallerySourceItems, sourceSet, sourceMap] = refreshSourceData();
+
+          // if media galleries don't match, sort to match new data order
+          mediaGalleryDestinationItems.forEach((destinationItem, destinationIndex) => {
+            const sourceData = sourceMap.get(destinationItem.dataset.mediaId);
+
+            if (sourceData && sourceData.index !== destinationIndex) {
+              mediaGallerySource.insertBefore(
+                sourceData.item,
+                mediaGallerySource.querySelector(`li:nth-of-type(${destinationIndex + 1})`)
+              );
+
+              // refresh source now that it has been modified
+              [mediaGallerySourceItems, sourceSet, sourceMap] = refreshSourceData();
+            }
+          });
+        }
+
+        // set featured media as active in the media gallery
+        this.querySelector(`media-gallery`)?.setActiveMedia?.(
+          `${this.dataset.section}-${variantFeaturedMediaId}`,
+          true
+        );
+
+        // update media modal
+        const modalContent = this.productModal?.querySelector(`.product-media-modal__content`);
+        const newModalContent = html.querySelector(`product-modal .product-media-modal__content`);
+        if (modalContent && newModalContent) modalContent.innerHTML = newModalContent.innerHTML;
+      }
+
+      setQuantityBoundries() {
+        const data = {
+          cartQuantity: this.quantityInput.dataset.cartQuantity ? parseInt(this.quantityInput.dataset.cartQuantity) : 0,
+          min: this.quantityInput.dataset.min ? parseInt(this.quantityInput.dataset.min) : 1,
+          max: this.quantityInput.dataset.max ? parseInt(this.quantityInput.dataset.max) : null,
+          step: this.quantityInput.step ? parseInt(this.quantityInput.step) : 1,
+        };
+
+        let min = data.min;
+        const max = data.max === null ? data.max : data.max - data.cartQuantity;
+        if (max !== null) min = Math.min(min, max);
+        if (data.cartQuantity >= data.min) min = Math.min(min, data.step);
+
+        this.quantityInput.min = min;
+
+        if (max) {
+          this.quantityInput.max = max;
+        } else {
+          this.quantityInput.removeAttribute('max');
+        }
+        this.quantityInput.value = min;
+
+        publish(PUB_SUB_EVENTS.quantityUpdate, undefined);
+      }
+
+      fetchQuantityRules() {
+        const currentVariantId = this.productForm?.variantIdInput?.value;
+        if (!currentVariantId) return;
+
+        this.querySelector('.quantity__rules-cart .loading__spinner').classList.remove('hidden');
+        return fetch(`${this.dataset.url}?variant=${currentVariantId}&section_id=${this.dataset.section}`)
+          .then((response) => response.text())
+          .then((responseText) => {
+            const html = new DOMParser().parseFromString(responseText, 'text/html');
+            this.updateQuantityRules(this.dataset.section, html);
+          })
+          .catch((e) => console.error(e))
+          .finally(() => this.querySelector('.quantity__rules-cart .loading__spinner').classList.add('hidden'));
+      }
+
+      updateQuantityRules(sectionId, html) {
+        if (!this.quantityInput) return;
+        this.setQuantityBoundries();
+
+        const quantityFormUpdated = html.getElementById(`Quantity-Form-${sectionId}`);
+        const selectors = ['.quantity__input', '.quantity__rules', '.quantity__label'];
+        for (let selector of selectors) {
+          const current = this.quantityForm.querySelector(selector);
+          const updated = quantityFormUpdated.querySelector(selector);
+          if (!current || !updated) continue;
+          if (selector === '.quantity__input') {
+            const attributes = ['data-cart-quantity', 'data-min', 'data-max', 'step'];
+            for (let attribute of attributes) {
+              const valueUpdated = updated.getAttribute(attribute);
+              if (valueUpdated !== null) {
+                current.setAttribute(attribute, valueUpdated);
+              } else {
+                current.removeAttribute(attribute);
+              }
+            }
+          } else {
+            current.innerHTML = updated.innerHTML;
+            if (selector === '.quantity__label') {
+              const updatedAriaLabelledBy = updated.getAttribute('aria-labelledby');
+              if (updatedAriaLabelledBy) {
+                current.setAttribute('aria-labelledby', updatedAriaLabelledBy);
+                // Update the referenced visually hidden element
+                const labelId = updatedAriaLabelledBy;
+                const currentHiddenLabel = document.getElementById(labelId);
+                const updatedHiddenLabel = html.getElementById(labelId);
+                if (currentHiddenLabel && updatedHiddenLabel) {
+                  currentHiddenLabel.textContent = updatedHiddenLabel.textContent;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      get productForm() {
+        return this.querySelector(`product-form`);
+      }
+
+      get productModal() {
+        return document.querySelector(`#ProductModal-${this.dataset.section}`);
+      }
+
+      get pickupAvailability() {
+        return this.querySelector(`pickup-availability`);
+      }
+
+      get variantSelectors() {
+        return this.querySelector('variant-selects');
+      }
+
+      get relatedProducts() {
+        const relatedProductsSectionId = SectionId.getIdForSection(
+          SectionId.parseId(this.sectionId),
+          'related-products'
+        );
+        return document.querySelector(`product-recommendations[data-section-id^="${relatedProductsSectionId}"]`);
+      }
+
+      get quickOrderList() {
+        const quickOrderListSectionId = SectionId.getIdForSection(
+          SectionId.parseId(this.sectionId),
+          'quick_order_list'
+        );
+        return document.querySelector(`quick-order-list[data-id^="${quickOrderListSectionId}"]`);
+      }
+
+      get sectionId() {
+        return this.dataset.originalSection || this.dataset.section;
       }
     }
-
-    setUnavailable() {
-      const addButton = this.querySelector('[name="add"]');
-      if (!addButton) return;
-
-      addButton.disabled = true;
-      const btnText = addButton.querySelector('.btn__text');
-      if (btnText) btnText.textContent = window.variantStrings.unavailable;
-
-      // Hide price
-      const priceEl = document.getElementById(`price-${this.sectionId}`);
-      if (priceEl) priceEl.classList.add('hidden');
-    }
-  }
-
-  customElements.define('product-info', ProductInfo);
+  );
 }

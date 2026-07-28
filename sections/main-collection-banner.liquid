@@ -1,115 +1,76 @@
+{% comment %}theme-check-disable ImgLazyLoading{% endcomment %}
+{{ 'component-collection-hero.css' | asset_url | stylesheet_tag }}
+
 {%- style -%}
-  .collection-banner__image {
-    width: 100%;
-    max-height: 40rem;
-    object-fit: cover;
-    border-radius: var(--media-radius);
-  }
-  @media screen and (min-width: 750px) {
-    .collection-banner__image {
-      max-height: 50rem;
+  @media screen and (max-width: 749px) {
+    .collection-hero--with-image .collection-hero__inner {
+      padding-bottom: calc({{ settings.media_shadow_vertical_offset | at_least: 0 }}px + 2rem);
     }
-  }
-  .collection-banner__info {
-    padding-block-start: 2rem;
-    text-align: center;
-  }
-  .collection-banner__description {
-    margin-block-start: 1.2rem;
-    max-width: 80rem;
-    margin-inline: auto;
-    color: rgba(var(--color-foreground), 0.7);
-  }
-  .collection-banner__count {
-    margin-block-start: 0.8rem;
-    font-size: 1.4rem;
-    color: rgba(var(--color-foreground), 0.5);
   }
 {%- endstyle -%}
 
-{%- render 'section-padding' -%}
+<div class="collection-hero{% if section.settings.show_collection_image and collection.image %} collection-hero--with-image{% endif %} color-{{ section.settings.color_scheme }} gradient">
+  <div class="collection-hero__inner page-width {% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+    <div class="collection-hero__text-wrapper">
+      <h1 class="collection-hero__title">
+        <span class="visually-hidden">{{ 'sections.collection_template.title' | t }}: </span>
+        {{- collection.title | escape -}}
+      </h1>
 
-<div class="collection-banner color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
-  <div class="page-width">
-    {%- if section.settings.show_collection_image and collection.image -%}
-      <img
-        class="collection-banner__image"
-        src="{{ collection.image | image_url: width: 1500 }}"
-        srcset="
-          {{ collection.image | image_url: width: 375 }} 375w,
-          {{ collection.image | image_url: width: 750 }} 750w,
-          {{ collection.image | image_url: width: 1100 }} 1100w,
-          {{ collection.image | image_url: width: 1500 }} 1500w,
-          {{ collection.image | image_url: width: 1780 }} 1780w,
-          {{ collection.image | image_url: width: 2000 }} 2000w
-        "
-        sizes="100vw"
-        alt="{{ collection.image.alt | escape }}"
-        width="{{ collection.image.width }}"
-        height="{{ collection.image.height }}"
-        loading="eager"
-        fetchpriority="high"
-      >
-    {%- endif -%}
-
-    <div class="collection-banner__info">
-      <h1 class="collection-banner__title h1">{{ collection.title }}</h1>
-
-      {%- if section.settings.show_collection_description and collection.description != blank -%}
-        <div class="collection-banner__description rte">{{ collection.description }}</div>
+      {%- if section.settings.show_collection_description -%}
+        <div class="collection-hero__description rte">{{ collection.description }}</div>
       {%- endif -%}
-
-      <p class="collection-banner__count">{{ collection.products_count }} products</p>
     </div>
+
+    {%- if section.settings.show_collection_image and collection.image -%}
+      <div class="collection-hero__image-container media gradient">
+        <img
+          srcset="
+            {%- if collection.image.width >= 165 -%}{{ collection.image | image_url: width: 165 }} 165w,{%- endif -%}
+            {%- if collection.image.width >= 360 -%}{{ collection.image | image_url: width: 360 }} 360w,{%- endif -%}
+            {%- if collection.image.width >= 535 -%}{{ collection.image | image_url: width: 535 }} 535w,{%- endif -%}
+            {%- if collection.image.width >= 750 -%}{{ collection.image | image_url: width: 750 }} 750w,{%- endif -%}
+            {%- if collection.image.width >= 1070 -%}{{ collection.image | image_url: width: 1070 }} 1070w,{%- endif -%}
+            {%- if collection.image.width >= 1500 -%}{{ collection.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+            {{ collection.image | image_url }} {{ collection.image.width }}w
+          "
+          src="{{ collection.image | image_url: width: 750 }}"
+          sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 | divided_by: 2 }}px, (min-width: 750px) calc(50vw - 130px), calc(50vw - 55px)"
+          alt="{{ collection.image.alt | escape }}"
+          width="{{ collection.image.width }}"
+          height="{{ collection.image.height }}"
+        >
+      </div>
+    {%- endif -%}
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "Collection banner",
-  "tag": "section",
-  "class": "section-collection-banner",
-  "enabled_on": {
-    "templates": ["collection"]
-  },
+  "name": "t:sections.main-collection-banner.name",
+  "class": "section",
   "settings": [
     {
-      "type": "checkbox",
-      "id": "show_collection_image",
-      "default": true,
-      "label": "Show collection image"
+      "type": "paragraph",
+      "content": "t:sections.main-collection-banner.settings.paragraph.content"
     },
     {
       "type": "checkbox",
       "id": "show_collection_description",
       "default": true,
-      "label": "Show collection description"
+      "label": "t:sections.main-collection-banner.settings.show_collection_description.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "default": false,
+      "label": "t:sections.main-collection-banner.settings.show_collection_image.label"
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "Color scheme",
+      "label": "t:sections.all.colors.label",
       "default": "scheme-1"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "default": 36,
-      "unit": "px",
-      "label": "Top padding"
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "default": 28,
-      "unit": "px",
-      "label": "Bottom padding"
     }
   ]
 }

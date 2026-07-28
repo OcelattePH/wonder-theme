@@ -1,5 +1,3 @@
-{{ 'component-marquee.css' | asset_url | stylesheet_tag }}
-
 {%- style -%}
   .section-{{ section.id }}-padding {
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
@@ -14,104 +12,152 @@
   }
 {%- endstyle -%}
 
-{%- if section.blocks.size > 0 -%}
-  <div
-    class="marquee color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-padding"
-    id="Marquee-{{ section.id }}"
-    role="marquee"
-    aria-label="{{ 'sections.scrolling-marquee.name' | t | default: 'Scrolling marquee' }}"
-  >
-    <div class="marquee__track" style="--marquee-speed: {{ section.settings.speed }}s;">
-      {%- comment -%} Repeat content 4x for seamless infinite scroll {%- endcomment -%}
+<style>
+  .scrolling-marquee-{{ section.id }} {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .scrolling-marquee__track-{{ section.id }} {
+    display: inline-flex;
+    animation: scrolling-marquee-{{ section.id }} var(--marquee-duration) linear infinite;
+  }
+
+  .scrolling-marquee__item-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 2rem;
+    font-size: 1.4rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .scrolling-marquee__separator-{{ section.id }} {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  @keyframes scrolling-marquee-{{ section.id }} {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-25%);
+    }
+  }
+</style>
+
+{%- liquid
+  assign speed = section.settings.speed
+  if speed == 'slow'
+    assign duration = '40s'
+  elsif speed == 'fast'
+    assign duration = '15s'
+  else
+    assign duration = '25s'
+  endif
+-%}
+
+<div
+  class="color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding"
+  style="--marquee-duration: {{ duration }};"
+>
+  <div class="scrolling-marquee-{{ section.id }}">
+    <div class="scrolling-marquee__track-{{ section.id }}">
       {%- for i in (1..4) -%}
         {%- for block in section.blocks -%}
-          <span class="marquee__item" {{ block.shopify_attributes }}>
-            {%- if block.settings.link != blank -%}
-              <a href="{{ block.settings.link }}" class="marquee__link">
-                {{ block.settings.text | escape }}
-              </a>
-            {%- else -%}
-              {{ block.settings.text | escape }}
-            {%- endif -%}
+          <span
+            class="scrolling-marquee__item-{{ section.id }}"
+            {{ block.shopify_attributes }}
+          >
+            {{ block.settings.text | escape }}
           </span>
-          <span class="marquee__separator" aria-hidden="true">{{ section.settings.separator }}</span>
+          <span class="scrolling-marquee__separator-{{ section.id }}" aria-hidden="true"></span>
         {%- endfor -%}
       {%- endfor -%}
     </div>
   </div>
-{%- endif -%}
+</div>
 
 {% schema %}
 {
-  "name": "t:sections.scrolling-marquee.name",
+  "name": "Scrolling marquee",
   "tag": "section",
-  "class": "section-marquee",
+  "class": "section",
   "settings": [
     {
-      "type": "range",
+      "type": "select",
       "id": "speed",
-      "min": 10,
-      "max": 60,
-      "step": 5,
-      "default": 30,
-      "unit": "s",
-      "label": "t:sections.scrolling-marquee.settings.speed.label"
-    },
-    {
-      "type": "text",
-      "id": "separator",
-      "default": " | ",
-      "label": "t:sections.scrolling-marquee.settings.separator.label"
+      "options": [
+        {
+          "value": "slow",
+          "label": "Slow"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "fast",
+          "label": "Fast"
+        }
+      ],
+      "default": "medium",
+      "label": "Scroll speed"
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "t:sections.scrolling-marquee.settings.color_scheme.label",
+      "label": "t:sections.all.colors.label",
       "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
     },
     {
       "type": "range",
       "id": "padding_top",
       "min": 0,
-      "max": 20,
-      "step": 2,
-      "default": 4,
+      "max": 100,
+      "step": 4,
       "unit": "px",
-      "label": "t:sections.scrolling-marquee.settings.padding_top.label"
+      "label": "t:sections.all.padding.padding_top",
+      "default": 12
     },
     {
       "type": "range",
       "id": "padding_bottom",
       "min": 0,
-      "max": 20,
-      "step": 2,
-      "default": 4,
+      "max": 100,
+      "step": 4,
       "unit": "px",
-      "label": "t:sections.scrolling-marquee.settings.padding_bottom.label"
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 12
     }
   ],
   "blocks": [
     {
       "type": "text_item",
-      "name": "Text",
+      "name": "Text item",
       "settings": [
         {
           "type": "text",
           "id": "text",
-          "default": "Announcement text",
-          "label": "t:sections.scrolling-marquee.settings.text.label"
-        },
-        {
-          "type": "url",
-          "id": "link",
-          "label": "Link"
+          "default": "Free shipping on orders over $50",
+          "label": "Text"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "t:sections.scrolling-marquee.name",
+      "name": "Scrolling marquee",
       "blocks": [
         {
           "type": "text_item",
@@ -122,7 +168,13 @@
         {
           "type": "text_item",
           "settings": {
-            "text": "Shop our bestsellers"
+            "text": "New arrivals every week"
+          }
+        },
+        {
+          "type": "text_item",
+          "settings": {
+            "text": "30-day hassle-free returns"
           }
         }
       ]

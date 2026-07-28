@@ -1,3 +1,7 @@
+{{ 'component-article-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'section-main-blog.css' | asset_url | stylesheet_tag }}
+
 {%- style -%}
   .section-{{ section.id }}-padding {
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
@@ -12,74 +16,37 @@
   }
 {%- endstyle -%}
 
-{%- paginate blog.articles by 12 -%}
-  <div class="main-blog section-{{ section.id }}-padding color-{{ section.settings.color_scheme }}">
-    <div class="page-width">
-      <h1 class="main-blog__title h2">{{ blog.title | escape }}</h1>
+{%- paginate blog.articles by 6 -%}
+  <div class="main-blog page-width section-{{ section.id }}-padding">
+    <h1 class="title--primary{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+      {{ blog.title | escape }}
+    </h1>
 
-      {%- if blog.tags.size > 0 -%}
-        <nav class="main-blog__tag-filter" aria-label="Blog tag filter">
-          <ul class="main-blog__tag-list list-unstyled" role="list">
-            <li>
-              <a
-                href="{{ blog.url }}"
-                class="main-blog__tag-link{% if current_tags == blank %} main-blog__tag-link--active{% endif %}"
-                {% if current_tags == blank %}aria-current="page"{% endif %}
-              >
-                {{ 'blogs.article.all_tags' | t | default: 'All' }}
-              </a>
-            </li>
-            {%- for tag in blog.tags -%}
-              <li>
-                <a
-                  href="{{ blog.url }}/tagged/{{ tag | handle }}"
-                  class="main-blog__tag-link{% if current_tags contains tag %} main-blog__tag-link--active{% endif %}"
-                  {% if current_tags contains tag %}aria-current="page"{% endif %}
-                >
-                  {{ tag }}
-                </a>
-              </li>
-            {%- endfor -%}
-          </ul>
-        </nav>
-      {%- endif -%}
-
-      <div class="main-blog__articles grid grid--{{ section.settings.columns_desktop }}-col grid--1-col-mobile">
-        {%- for article in blog.articles -%}
-          <div class="grid__item">
-            {% render 'card-article',
-              article: article,
-              show_image: section.settings.show_image,
-              show_date: section.settings.show_date,
-              show_author: section.settings.show_author,
-              show_excerpt: section.settings.show_excerpt
-            %}
-          </div>
-        {%- endfor -%}
-      </div>
-
-      {%- if paginate.pages > 1 -%}
-        <nav class="pagination" role="navigation" aria-label="Pagination">
-          <ul class="pagination__list list-unstyled" role="list">
-            {%- if paginate.previous -%}
-              <li><a href="{{ paginate.previous.url }}" aria-label="Previous page">&laquo; {{ paginate.previous.title }}</a></li>
-            {%- endif -%}
-            {%- for part in paginate.parts -%}
-              <li>
-                {%- if part.is_link -%}
-                  <a href="{{ part.url }}">{{ part.title }}</a>
-                {%- else -%}
-                  <span class="pagination__current" aria-current="page">{{ part.title }}</span>
-                {%- endif -%}
-              </li>
-            {%- endfor -%}
-            {%- if paginate.next -%}
-              <li><a href="{{ paginate.next.url }}" aria-label="Next page">{{ paginate.next.title }} &raquo;</a></li>
-            {%- endif -%}
-          </ul>
-        </nav>
-      {%- endif -%}
+    <div class="blog-articles {% if section.settings.layout == 'collage' %}blog-articles--collage{% endif %}">
+      {%- for article in blog.articles -%}
+        <div
+          class="blog-articles__article article{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          {% if settings.animations_reveal_on_scroll %}
+            data-cascade
+            style="--animation-order: {{ forloop.index }};"
+          {% endif %}
+        >
+          {%- render 'article-card',
+            article: article,
+            media_height: section.settings.image_height,
+            media_aspect_ratio: article.image.aspect_ratio,
+            show_image: section.settings.show_image,
+            show_date: section.settings.show_date,
+            show_author: section.settings.show_author,
+            show_excerpt: true
+          -%}
+        </div>
+      {%- endfor -%}
     </div>
+
+    {%- if paginate.pages > 1 -%}
+      {%- render 'pagination', paginate: paginate -%}
+    {%- endif -%}
   </div>
 {%- endpaginate -%}
 
@@ -88,48 +55,64 @@
   "name": "t:sections.main-blog.name",
   "tag": "section",
   "class": "section",
-  "enabled_on": {
-    "templates": ["blog"]
-  },
   "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "options": [
+        {
+          "value": "grid",
+          "label": "t:sections.main-blog.settings.layout.options__1.label"
+        },
+        {
+          "value": "collage",
+          "label": "t:sections.main-blog.settings.layout.options__2.label"
+        }
+      ],
+      "default": "collage",
+      "label": "t:sections.main-blog.settings.layout.label"
+    },
     {
       "type": "checkbox",
       "id": "show_image",
-      "label": "t:sections.main-blog.settings.show_image.label",
-      "default": true
+      "default": true,
+      "label": "t:sections.main-blog.settings.show_image.label"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.main-blog.settings.image_height.options__1.label"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.main-blog.settings.image_height.options__2.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.main-blog.settings.image_height.options__3.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.main-blog.settings.image_height.options__4.label"
+        }
+      ],
+      "default": "medium",
+      "label": "t:sections.main-blog.settings.image_height.label"
     },
     {
       "type": "checkbox",
       "id": "show_date",
-      "label": "t:sections.main-blog.settings.show_date.label",
-      "default": true
+      "default": true,
+      "label": "t:sections.main-blog.settings.show_date.label"
     },
     {
       "type": "checkbox",
       "id": "show_author",
-      "label": "t:sections.main-blog.settings.show_author.label",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_excerpt",
-      "label": "t:sections.main-blog.settings.show_excerpt.label",
-      "default": true
-    },
-    {
-      "type": "range",
-      "id": "columns_desktop",
-      "label": "t:sections.main-blog.settings.columns_desktop.label",
-      "min": 2,
-      "max": 4,
-      "step": 1,
-      "default": 3
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:sections.all.colors.label",
-      "default": "scheme-1"
+      "default": false,
+      "label": "t:sections.main-blog.settings.show_author.label"
     },
     {
       "type": "header",
