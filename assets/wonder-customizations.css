@@ -243,56 +243,142 @@ button.shopify-payment-button__button {
 
 
 /* ============================================
-   HEADER - Clean, sticky, refined
+   HEADER - Clean, centered logo, drawer nav
+   Wonder-style: logo center, hamburger left, icons right
    ============================================ */
 
 .header {
-  padding: 1.6rem 3rem;
+  padding: 1.2rem 2.4rem;
+}
+
+@media screen and (min-width: 990px) {
+  .header {
+    padding: 1.4rem 4rem;
+  }
 }
 
 .header__heading-link {
   font-family: var(--wonder-heading-family);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  font-size: 2.4rem;
+}
+
+.header__heading-logo-wrapper {
+  max-width: 16rem;
 }
 
 .shopify-section-header .header-wrapper {
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  border-bottom: 1px solid var(--wonder-border);
+}
+
+.shopify-section-header .header-wrapper--border-bottom {
   border-bottom: 1px solid var(--wonder-border);
 }
 
 .shopify-section-header.shopify-section-header-sticky .header-wrapper--border-bottom {
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.04);
+  background-color: rgba(var(--color-background), 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .header__icon {
   width: 4.4rem;
   height: 4.4rem;
+  position: relative;
 }
 
 .header__icon .icon {
-  width: 2rem;
-  height: 2rem;
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+.header__icon:hover {
+  opacity: 0.7;
+  transform: none;
+}
+
+.header__icon .icon-account,
+.header__icon .icon-search,
+.header__icon .icon-cart,
+.header__icon .icon-cart-empty {
+  fill: currentColor;
+}
+
+.cart-count-bubble {
+  font-family: var(--wonder-body-family);
+  font-size: 1rem;
+  font-weight: 600;
+  min-width: 1.8rem;
+  min-height: 1.8rem;
+  border-radius: 50%;
+}
+
+.header__inline-menu .header__menu-item {
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.header-wrapper .list-menu--disclosure {
+  font-family: var(--wonder-body-family);
+}
+
+.localization-form .disclosure__button {
+  font-family: var(--wonder-body-family);
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+}
+
+header-drawer .menu-drawer__navigation {
+  padding: 2rem 3rem;
+}
+
+.header--middle-center .header__heading {
+  margin: 0;
+}
+
+.header .header__icons {
+  gap: 0.2rem;
 }
 
 
 /* ============================================
-   HAMBURGER MENU DRAWER - Blur backdrop
+   HAMBURGER MENU DRAWER - Luxury beauty style
    ============================================ */
 
 .menu-drawer {
   background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-right: 1px solid var(--wonder-border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: none;
+  max-width: 42rem;
+}
+
+.menu-drawer__inner-container {
+  padding: 0;
+}
+
+.menu-drawer__navigation-container {
+  padding: 2rem 3.2rem;
 }
 
 .menu-drawer__navigation .menu-drawer__menu-item {
   font-family: var(--wonder-body-family);
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 400;
-  letter-spacing: 0.02em;
-  padding: 1.4rem 0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1.6rem 0;
   border-bottom: 1px solid var(--wonder-border);
+}
+
+.menu-drawer__menu-item .icon-caret {
+  width: 1.2rem;
+  height: 1.2rem;
+  opacity: 0.4;
 }
 
 .menu-drawer__close-button {
@@ -303,24 +389,66 @@ button.shopify-payment-button__button {
 .menu-drawer-container .menu-drawer__utility-links {
   background: var(--wonder-dark);
   color: #fff;
-  padding: 2rem 3rem;
+  padding: 2.4rem 3.2rem;
+}
+
+.menu-drawer__utility-links a {
+  font-family: var(--wonder-body-family);
+  font-size: 1.3rem;
+  letter-spacing: 0.06em;
+}
+
+header-drawer summary .icon-hamburger {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+header-drawer summary {
+  width: 4.4rem;
+  height: 4.4rem;
+}
+
+.js .menu-opening .menu-drawer {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+.menu-drawer__submenu .menu-drawer__menu-item {
+  font-size: 1.4rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  text-transform: none;
 }
 
 
 /* ============================================
-   ANNOUNCEMENT BAR - Scrolling marquee style
+   ANNOUNCEMENT BAR - Elegant banner
    ============================================ */
 
 .announcement-bar {
   font-family: var(--wonder-body-family);
-  font-size: 1.2rem;
-  letter-spacing: 0.08em;
+  font-size: 1.1rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  font-weight: 500;
+  font-weight: 400;
+  padding: 0.8rem 0;
+}
+
+.announcement-bar__link {
+  padding: 0.6rem 2rem;
+}
+
+.announcement-bar-section .announcement-bar-slider {
+  min-height: 3.2rem;
 }
 
 .utility-bar {
   font-family: var(--wonder-body-family);
+}
+
+.announcement-bar__message {
+  font-weight: 400;
+  letter-spacing: 0.14em;
 }
 
 
@@ -484,7 +612,7 @@ button.shopify-payment-button__button {
 
 
 /* ============================================
-   FOOTER - Dark green editorial
+   FOOTER - Dark forest green editorial
    ============================================ */
 
 .footer {
@@ -499,9 +627,9 @@ button.shopify-payment-button__button {
 
 .footer-block__heading {
   font-family: var(--wonder-body-family);
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   margin-bottom: 2rem;
 }
@@ -509,7 +637,13 @@ button.shopify-payment-button__button {
 .footer-block__details-content a {
   font-size: 1.4rem;
   font-weight: 300;
-  line-height: 2;
+  line-height: 2.2;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.footer-block__details-content a:hover {
+  opacity: 1;
 }
 
 .footer-block__newsletter .newsletter-form__field-wrapper {
@@ -519,6 +653,8 @@ button.shopify-payment-button__button {
 .footer-block__newsletter .field__input {
   border-radius: 30px;
   font-family: var(--wonder-body-family);
+  font-size: 1.3rem;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .footer-block__newsletter .newsletter-form__button {
@@ -526,26 +662,53 @@ button.shopify-payment-button__button {
 }
 
 .footer__content-bottom {
-  padding: 2rem 0;
-  font-size: 1.2rem;
-  opacity: 0.7;
+  padding: 2.4rem 0;
+  font-size: 1.1rem;
+  opacity: 0.6;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .copyright {
   font-size: 1.1rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
 }
 
 .footer .list-social__link {
-  width: 4.4rem;
-  height: 4.4rem;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
-  border: 1px solid currentColor;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   opacity: 0.7;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, border-color 0.3s ease;
 }
 
 .footer .list-social__link:hover {
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.footer .footer__content-top .footer__blocks-wrapper {
+  row-gap: 4rem;
+}
+
+.footer .localization-form .disclosure__button,
+.footer .localization-selector {
+  font-family: var(--wonder-body-family);
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+}
+
+.footer .list-payment .payment-icon {
+  opacity: 0.6;
+}
+
+.footer__content-bottom-wrapper .policies a {
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+}
+
+.footer__content-bottom-wrapper .policies a:hover {
   opacity: 1;
 }
 
@@ -1424,4 +1587,123 @@ html {
 
 .section-template--*-padding {
   scroll-margin-top: 8rem;
+}
+
+
+/* ============================================
+   404 PAGE - Styled not-found
+   ============================================ */
+
+.shopify-policy__title,
+.main-page-title {
+  font-family: var(--wonder-heading-family);
+  font-weight: 400;
+}
+
+
+/* ============================================
+   NEWSLETTER SECTION - Premium signup
+   ============================================ */
+
+.newsletter .newsletter__heading {
+  font-family: var(--wonder-heading-family);
+  font-weight: 400;
+}
+
+.newsletter .newsletter__subheading,
+.newsletter .rte {
+  font-family: var(--wonder-body-family);
+  max-width: 44rem;
+  margin-inline: auto;
+}
+
+.newsletter .newsletter-form__field-wrapper {
+  max-width: 44rem;
+  margin-inline: auto;
+}
+
+
+/* ============================================
+   GLOBAL COMPONENT POLISH
+   ============================================ */
+
+.title-wrapper--no-top-margin .title,
+.section-header .title {
+  font-family: var(--wonder-heading-family);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.link--text {
+  font-family: var(--wonder-body-family);
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.section-header .desc,
+.section-header .subtitle {
+  font-family: var(--wonder-body-family);
+  font-weight: 300;
+}
+
+.disclosure__list .disclosure__item .disclosure__link {
+  font-family: var(--wonder-body-family);
+  font-size: 1.3rem;
+}
+
+.color-scheme-1 {
+  --color-foreground-rgb: 21, 21, 21;
+}
+
+.shopify-section:first-child .announcement-bar-section {
+  border-bottom: none;
+}
+
+.product-grid-container .grid__item {
+  padding-bottom: 1.6rem;
+}
+
+.collection .title-wrapper {
+  margin-bottom: 3rem;
+}
+
+.collapsible-content__header {
+  font-family: var(--wonder-heading-family);
+  font-weight: 400;
+}
+
+summary .icon-caret {
+  transition: transform 0.25s ease;
+}
+
+details[open] > summary .icon-caret {
+  transform: rotate(180deg);
+}
+
+.shopify-section + .shopify-section {
+  margin-top: 0;
+}
+
+.section-header .desc,
+.featured-collection .title-wrapper .subtitle {
+  font-family: var(--wonder-body-family);
+  font-size: 1.4rem;
+  font-weight: 300;
+  max-width: 52rem;
+}
+
+.product-card-wrapper .price {
+  font-family: var(--wonder-body-family);
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+.header__heading-link--image {
+  max-width: 14rem;
+}
+
+.spaced-section--full-width + .spaced-section--full-width {
+  margin-top: 0;
 }
