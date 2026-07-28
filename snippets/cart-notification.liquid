@@ -1,43 +1,60 @@
-{{ 'component-cart-notification.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+{% comment %}
+  Renders cart notification
 
-<cart-notification class="cart-notification" role="alert" aria-live="polite" aria-atomic="true">
-  <div id="cart-notification" class="cart-notification__wrapper" hidden>
-    <button
-      class="cart-notification__close"
-      type="button"
-      aria-label="{{ 'accessibility.close' | t }}"
+  Accepts:
+  - color_scheme: {String} sets the color scheme of the notification (optional)
+  - desktop_menu_type: {String} passes the desktop menu type which allows us to use the right css class (optional)
+
+  Usage:
+  {% render 'cart-notification' %}
+{% endcomment %}
+
+<cart-notification>
+  <div class="cart-notification-wrapper{% if desktop_menu_type != 'drawer' %} page-width{% endif %}">
+    <div
+      id="cart-notification"
+      class="cart-notification focus-inset{% if color_scheme %} color-{{ color_scheme }} gradient{% endif %}"
+      aria-modal="true"
+      aria-label="{{ 'general.cart.item_added' | t }}"
+      role="dialog"
+      tabindex="-1"
     >
-      <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 20 20">
-        <path d="M5.293 5.293a1 1 0 011.414 0L10 8.586l3.293-3.293a1 1 0 111.414 1.414L11.414 10l3.293 3.293a1 1 0 01-1.414 1.414L10 11.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586 10 5.293 6.707a1 1 0 010-1.414z" fill="currentColor"/>
-      </svg>
-    </button>
-
-    <div id="cart-notification-product" class="cart-notification__product">
-      <div class="cart-notification__product-image" id="cart-notification-image">
-        {%- comment -%} Product image inserted dynamically {%- endcomment -%}
+      <div class="cart-notification__header">
+        <h2 class="cart-notification__heading caption-large text-body">
+          {{- 'icon-checkmark.svg' | inline_asset_content -}}
+          {{ 'general.cart.item_added' | t }}
+        </h2>
+        <button
+          type="button"
+          class="cart-notification__close modal__close-button link link--text focus-inset"
+          aria-label="{{ 'accessibility.close' | t }}"
+        >
+          <span class="svg-wrapper">
+            {{- 'icon-close.svg' | inline_asset_content -}}
+          </span>
+        </button>
       </div>
-      <div class="cart-notification__product-info">
-        <h3 class="cart-notification__heading caption-large" id="cart-notification-heading">
-          {%- comment -%} Product title inserted dynamically {%- endcomment -%}
-        </h3>
-        <p class="cart-notification__message caption">{{ 'cart.notification.added' | t }}</p>
+      <div id="cart-notification-product" class="cart-notification-product"></div>
+      <div class="cart-notification__links">
+        <a
+          href="{{ routes.cart_url }}"
+          id="cart-notification-button"
+          class="button button--secondary button--full-width"
+        >
+          {{- 'general.cart.view_empty_cart' | t -}}
+        </a>
+        <form action="{{ routes.cart_url }}" method="post" id="cart-notification-form">
+          <button class="button button--primary button--full-width" name="checkout">
+            {{ 'sections.cart.checkout' | t }}
+          </button>
+        </form>
+        <button type="button" class="link button-label">{{ 'general.continue_shopping' | t }}</button>
       </div>
-    </div>
-
-    <div class="cart-notification__links">
-      <a href="{{ routes.cart_url }}" class="button button--secondary cart-notification__view-cart">
-        {{ 'cart.notification.view_cart' | t }}
-        <span class="cart-notification__count badge">
-          {{ cart.item_count }}
-        </span>
-      </a>
-      <button
-        type="button"
-        class="button cart-notification__continue link underlined-link"
-      >
-        {{ 'cart.continue_shopping' | t }}
-      </button>
     </div>
   </div>
 </cart-notification>
+{% style %}
+  .cart-notification {
+    display: none;
+  }
+{% endstyle %}

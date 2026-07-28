@@ -1,419 +1,227 @@
-{% render 'section-padding' %}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+{{ 'component-slideshow.css' | asset_url | stylesheet_tag }}
 
 {%- style -%}
-  #shopify-section-{{ section.id }} .testimonials__wrapper {
-    max-width: 120rem;
-    margin: 0 auto;
-    padding: 0 1.5rem;
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
   }
 
   @media screen and (min-width: 750px) {
-    #shopify-section-{{ section.id }} .testimonials__wrapper {
-      padding: 0 5rem;
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
     }
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__heading {
-    font-size: 2.4rem;
-    text-align: center;
-    margin: 0 0 3rem;
-  }
-
-  @media screen and (min-width: 750px) {
-    #shopify-section-{{ section.id }} .testimonials__heading {
-      font-size: 3rem;
-    }
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__slider {
-    position: relative;
-    overflow: hidden;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__track {
-    display: flex;
-    transition: transform 0.5s ease;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__slide {
-    min-width: 100%;
-    padding: 0 1rem;
-    box-sizing: border-box;
-  }
-
-  @media screen and (min-width: 750px) {
-    #shopify-section-{{ section.id }} .testimonials__slide {
-      min-width: 50%;
-    }
-  }
-
-  @media screen and (min-width: 990px) {
-    #shopify-section-{{ section.id }} .testimonials__slide {
-      min-width: 33.333%;
-    }
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__card {
-    background: rgba(var(--color-background), 0.5);
-    border: 1px solid rgba(var(--color-foreground), 0.08);
-    border-radius: 0.8rem;
-    padding: 2.4rem;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 1.6rem;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__stars {
-    display: flex;
-    gap: 0.2rem;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__stars svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__stars .star-filled {
-    color: #f5a623;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__stars .star-empty {
-    color: rgba(var(--color-foreground), 0.15);
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__quote {
-    font-size: 1.4rem;
-    line-height: 1.6;
-    flex-grow: 1;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__quote p {
-    margin: 0;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__author-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    margin-top: auto;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__author-image {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__author-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    background: rgba(var(--color-foreground), 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: rgb(var(--color-foreground));
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__author-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__author-name {
-    font-weight: 600;
-    font-size: 1.4rem;
-    margin: 0;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__author-title {
-    font-size: 1.2rem;
-    opacity: 0.7;
-    margin: 0;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2.4rem;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: 1px solid rgba(var(--color-foreground), 0.2);
-    border-radius: 50%;
-    background: transparent;
-    cursor: pointer;
-    color: rgb(var(--color-foreground));
-    transition: background 0.2s, border-color 0.2s;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__btn:hover {
-    border-color: rgb(var(--color-foreground));
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__btn svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__dots {
-    display: flex;
-    gap: 0.6rem;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(var(--color-foreground), 0.2);
-    cursor: pointer;
-    padding: 0;
-    transition: background 0.2s;
-  }
-
-  #shopify-section-{{ section.id }} .testimonials__dot.active {
-    background: rgb(var(--color-foreground));
   }
 {%- endstyle -%}
 
-{%- if section.blocks.size > 0 -%}
-  <div class="testimonials color-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
-    <div class="testimonials__wrapper animate animate--slide-in">
-      {%- if section.settings.heading != blank -%}
-        <h2 class="testimonials__heading">{{ section.settings.heading | escape }}</h2>
-      {%- endif -%}
+<style>
+  .testimonials-{{ section.id }} .testimonial-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+  }
 
-      <slider-component
-        id="Slider-{{ section.id }}"
-        class="testimonials__slider"
-        {% if section.settings.autorotate %}
-          data-autorotate="{{ section.settings.autorotate_speed }}"
-        {% endif %}
+  .testimonials-{{ section.id }} .testimonial-slide__inner {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .testimonials-{{ section.id }} .testimonial-slide__stars {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .testimonials-{{ section.id }} .testimonial-slide__star {
+    width: 18px;
+    height: 18px;
+    color: #f5a623;
+  }
+
+  .testimonials-{{ section.id }} .testimonial-slide__star--empty {
+    opacity: 0.25;
+  }
+
+  .testimonials-{{ section.id }} .testimonial-slide__quote {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+  }
+
+  .testimonials-{{ section.id }} .testimonial-slide__author {
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+</style>
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding isolate testimonials-{{ section.id }}">
+    {%- if section.settings.heading != blank -%}
+      <div class="title-wrapper--no-top-margin center">
+        <h2 class="title inline-richtext {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+          {{ section.settings.heading }}
+        </h2>
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <slideshow-component
+        class="slider-mobile-gutter"
+        role="region"
+        aria-roledescription="Carousel"
+        aria-label="Testimonials"
       >
-        <div class="testimonials__track" data-slider-track>
+        <div
+          class="slideshow grid grid--1-col slider slider--everywhere{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
+          id="Slider-{{ section.id }}"
+          aria-live="polite"
+          aria-atomic="true"
+          data-autoplay="{{ section.settings.auto_rotate }}"
+          data-speed="{{ section.settings.autorotate_speed }}"
+        >
           {%- for block in section.blocks -%}
-            <div class="testimonials__slide" {{ block.shopify_attributes }} data-slide-index="{{ forloop.index0 }}">
-              <div class="testimonials__card">
+            <div
+              class="slideshow__slide grid__item grid--1-col slider__slide testimonial-slide"
+              id="Slide-{{ section.id }}-{{ forloop.index }}"
+              {{ block.shopify_attributes }}
+              role="group"
+              aria-roledescription="Slide"
+              aria-label="{{ forloop.index }} {{ 'general.slider.of' | t }} {{ forloop.length }}"
+              tabindex="-1"
+            >
+              <div class="testimonial-slide__inner">
                 {%- if block.settings.rating > 0 -%}
-                  <div class="testimonials__stars" role="img" aria-label="{{ block.settings.rating }} out of 5 stars">
+                  <div class="testimonial-slide__stars" aria-label="{{ block.settings.rating }} out of 5 stars">
                     {%- for i in (1..5) -%}
-                      {%- if i <= block.settings.rating -%}
-                        <svg class="star-filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                        </svg>
-                      {%- else -%}
-                        <svg class="star-empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                        </svg>
-                      {%- endif -%}
+                      <svg class="testimonial-slide__star{% if i > block.settings.rating %} testimonial-slide__star--empty{% endif %}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
                     {%- endfor -%}
                   </div>
                 {%- endif -%}
-
                 {%- if block.settings.text != blank -%}
-                  <blockquote class="testimonials__quote rte">{{ block.settings.text }}</blockquote>
-                {%- endif -%}
-
-                <div class="testimonials__author-wrapper">
-                  {%- if block.settings.image != blank -%}
-                    <img
-                      class="testimonials__author-image"
-                      src="{{ block.settings.image | image_url: width: 96 }}"
-                      alt="{{ block.settings.author | escape }}"
-                      width="48"
-                      height="48"
-                      loading="lazy"
-                    >
-                  {%- elsif block.settings.author != blank -%}
-                    <div class="testimonials__author-avatar" aria-hidden="true">
-                      {{ block.settings.author | slice: 0 }}
-                    </div>
-                  {%- endif -%}
-                  <div class="testimonials__author-info">
-                    {%- if block.settings.author != blank -%}
-                      <p class="testimonials__author-name">{{ block.settings.author | escape }}</p>
-                    {%- endif -%}
-                    {%- if block.settings.author_title != blank -%}
-                      <p class="testimonials__author-title">{{ block.settings.author_title | escape }}</p>
-                    {%- endif -%}
+                  <div class="testimonial-slide__quote rte">
+                    {{ block.settings.text }}
                   </div>
-                </div>
+                {%- endif -%}
+                {%- if block.settings.author != blank -%}
+                  <p class="testimonial-slide__author">
+                    {{ block.settings.author | escape }}
+                  </p>
+                {%- endif -%}
               </div>
             </div>
           {%- endfor -%}
         </div>
 
         {%- if section.blocks.size > 1 -%}
-          <div class="testimonials__controls">
+          <div class="slideshow__controls slider-buttons">
             <button
-              class="testimonials__btn testimonials__btn--prev"
               type="button"
-              aria-label="Previous testimonial"
-              data-slider-prev
+              class="slider-button slider-button--prev"
+              name="previous"
+              aria-label="{{ 'general.slider.previous_slide' | t }}"
+              aria-controls="Slider-{{ section.id }}"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 18l-6-6 6-6"/>
-              </svg>
+              <span class="svg-wrapper">
+                {{- 'icon-caret.svg' | inline_asset_content -}}
+              </span>
             </button>
-
-            <div class="testimonials__dots" data-slider-dots>
-              {%- for block in section.blocks -%}
-                <button
-                  class="testimonials__dot{% if forloop.first %} active{% endif %}"
-                  type="button"
-                  aria-label="Go to testimonial {{ forloop.index }}"
-                  data-slide-dot="{{ forloop.index0 }}"
-                ></button>
-              {%- endfor -%}
+            <div class="slider-counter slider-counter--dots">
+              <div class="slideshow__control-wrapper">
+                {%- for block in section.blocks -%}
+                  <button
+                    class="slider-counter__link slider-counter__link--dots link"
+                    aria-label="Load slide {{ forloop.index }} of {{ forloop.length }}"
+                    aria-controls="Slider-{{ section.id }}"
+                  >
+                    <span class="dot"></span>
+                  </button>
+                {%- endfor -%}
+              </div>
             </div>
-
             <button
-              class="testimonials__btn testimonials__btn--next"
               type="button"
-              aria-label="Next testimonial"
-              data-slider-next
+              class="slider-button slider-button--next"
+              name="next"
+              aria-label="{{ 'general.slider.next_slide' | t }}"
+              aria-controls="Slider-{{ section.id }}"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18l6-6-6-6"/>
-              </svg>
+              <span class="svg-wrapper">
+                {{- 'icon-caret.svg' | inline_asset_content -}}
+              </span>
             </button>
+
+            {%- if section.settings.auto_rotate -%}
+              <button
+                type="button"
+                class="slideshow__autoplay slider-button"
+                aria-label="{{ 'sections.slideshow.pause_slideshow' | t }}"
+              >
+                <span class="svg-wrapper">
+                  {{- 'icon-pause.svg' | inline_asset_content -}}
+                </span>
+                <span class="svg-wrapper">
+                  {{- 'icon-play.svg' | inline_asset_content -}}
+                </span>
+              </button>
+            {%- endif -%}
           </div>
         {%- endif -%}
-      </slider-component>
-    </div>
+      </slideshow-component>
+    {%- endif -%}
   </div>
+</div>
+
+{%- if request.design_mode -%}
+  <script src="{{ 'theme-editor.js' | asset_url }}" defer="defer"></script>
 {%- endif -%}
-
-<script>
-  if (!customElements.get('slider-component')) {
-    class SliderComponent extends HTMLElement {
-      constructor() {
-        super();
-        this.track = this.querySelector('[data-slider-track]');
-        this.slides = this.querySelectorAll('[data-slide-index]');
-        this.prevBtn = this.querySelector('[data-slider-prev]');
-        this.nextBtn = this.querySelector('[data-slider-next]');
-        this.dots = this.querySelectorAll('[data-slide-dot]');
-        this.currentIndex = 0;
-        this.autorotateInterval = null;
-      }
-
-      connectedCallback() {
-        if (!this.track || this.slides.length === 0) return;
-
-        if (this.prevBtn) {
-          this.prevBtn.addEventListener('click', () => this.prev());
-        }
-        if (this.nextBtn) {
-          this.nextBtn.addEventListener('click', () => this.next());
-        }
-        this.dots.forEach((dot) => {
-          dot.addEventListener('click', () => {
-            this.goTo(parseInt(dot.dataset.slideDot, 10));
-          });
-        });
-
-        const autorotateSpeed = this.dataset.autorotate;
-        if (autorotateSpeed) {
-          this.startAutorotate(parseInt(autorotateSpeed, 10) * 1000);
-          this.addEventListener('mouseenter', () => this.stopAutorotate());
-          this.addEventListener('mouseleave', () => {
-            if (autorotateSpeed) {
-              this.startAutorotate(parseInt(autorotateSpeed, 10) * 1000);
-            }
-          });
-        }
-      }
-
-      getVisibleSlides() {
-        const slideWidth = this.slides[0].offsetWidth;
-        const containerWidth = this.track.parentElement.offsetWidth;
-        return Math.round(containerWidth / slideWidth);
-      }
-
-      getMaxIndex() {
-        const visible = this.getVisibleSlides();
-        return Math.max(0, this.slides.length - visible);
-      }
-
-      goTo(index) {
-        const maxIndex = this.getMaxIndex();
-        this.currentIndex = Math.max(0, Math.min(index, maxIndex));
-        const offset = this.slides[this.currentIndex].offsetLeft - this.track.parentElement.offsetLeft;
-        this.track.style.transform = `translateX(-${offset}px)`;
-        this.updateDots();
-      }
-
-      prev() {
-        this.goTo(this.currentIndex - 1);
-      }
-
-      next() {
-        const maxIndex = this.getMaxIndex();
-        if (this.currentIndex >= maxIndex) {
-          this.goTo(0);
-        } else {
-          this.goTo(this.currentIndex + 1);
-        }
-      }
-
-      updateDots() {
-        this.dots.forEach((dot, i) => {
-          dot.classList.toggle('active', i === this.currentIndex);
-        });
-      }
-
-      startAutorotate(ms) {
-        this.stopAutorotate();
-        this.autorotateInterval = setInterval(() => this.next(), ms);
-      }
-
-      stopAutorotate() {
-        if (this.autorotateInterval) {
-          clearInterval(this.autorotateInterval);
-          this.autorotateInterval = null;
-        }
-      }
-
-      disconnectedCallback() {
-        this.stopAutorotate();
-      }
-    }
-
-    customElements.define('slider-component', SliderComponent);
-  }
-</script>
 
 {% schema %}
 {
   "name": "Testimonials",
   "tag": "section",
   "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
   "settings": [
     {
-      "type": "text",
+      "type": "inline_richtext",
       "id": "heading",
-      "label": "Heading",
-      "default": "What our customers say"
+      "default": "What our customers say",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h0",
+          "label": "t:sections.all.heading_size.options__3.label"
+        }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
     },
     {
       "type": "checkbox",
-      "id": "autorotate",
+      "id": "auto_rotate",
       "label": "Auto-rotate slides",
       "default": false
     },
@@ -421,17 +229,21 @@
       "type": "range",
       "id": "autorotate_speed",
       "min": 3,
-      "max": 10,
-      "step": 1,
-      "default": 5,
+      "max": 9,
+      "step": 2,
       "unit": "s",
-      "label": "Change slides every"
+      "label": "Change slides every",
+      "default": 5
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "Color scheme",
+      "label": "t:sections.all.colors.label",
       "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
     },
     {
       "type": "range",
@@ -440,8 +252,8 @@
       "max": 100,
       "step": 4,
       "unit": "px",
-      "default": 36,
-      "label": "Top padding"
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
     },
     {
       "type": "range",
@@ -450,8 +262,8 @@
       "max": 100,
       "step": 4,
       "unit": "px",
-      "default": 36,
-      "label": "Bottom padding"
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 52
     }
   ],
   "blocks": [
@@ -462,20 +274,14 @@
         {
           "type": "richtext",
           "id": "text",
-          "label": "Quote",
-          "default": "<p>This product has completely transformed my daily routine. I can not recommend it enough.</p>"
+          "default": "<p>This product has completely changed my routine. I can't imagine going back!</p>",
+          "label": "Quote"
         },
         {
           "type": "text",
           "id": "author",
-          "label": "Author",
-          "default": "Jane D."
-        },
-        {
-          "type": "text",
-          "id": "author_title",
-          "label": "Author title",
-          "default": "Verified buyer"
+          "default": "Happy Customer",
+          "label": "Author"
         },
         {
           "type": "range",
@@ -485,11 +291,6 @@
           "step": 1,
           "default": 5,
           "label": "Star rating"
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Author image"
         }
       ]
     }
@@ -501,27 +302,24 @@
         {
           "type": "quote",
           "settings": {
-            "text": "<p>Absolutely love this product. The quality is outstanding and it arrived quickly.</p>",
+            "text": "<p>This product has completely changed my routine. I can't imagine going back!</p>",
             "author": "Sarah M.",
-            "author_title": "Verified buyer",
             "rating": 5
           }
         },
         {
           "type": "quote",
           "settings": {
-            "text": "<p>Best purchase I have made this year. Will definitely be ordering again soon.</p>",
-            "author": "James R.",
-            "author_title": "Repeat customer",
+            "text": "<p>Amazing quality and fast shipping. Highly recommend to anyone on the fence.</p>",
+            "author": "James L.",
             "rating": 5
           }
         },
         {
           "type": "quote",
           "settings": {
-            "text": "<p>Great customer service and the product exceeded my expectations in every way.</p>",
-            "author": "Emily T.",
-            "author_title": "Verified buyer",
+            "text": "<p>Customer service went above and beyond. Will be ordering again soon.</p>",
+            "author": "Alex K.",
             "rating": 4
           }
         }

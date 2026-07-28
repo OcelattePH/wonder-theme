@@ -1,74 +1,56 @@
-/*
- * share.js -- <share-button> custom element
- * Uses Web Share API when available, falls back to clipboard copy.
- */
-
-class ShareButton extends HTMLElement {
-  constructor() {
-    super();
-    this.shareUrl = this.dataset.url || window.location.href;
-    this.button = this.querySelector('button');
-    this.panel = this.querySelector('.product__share-panel, .share-button__panel');
-    this.urlInput = this.querySelector('input[type="text"]');
-    this.copyButton = this.querySelector('.product__share-copy, .share-button__copy');
-  }
-
-  connectedCallback() {
-    if (!this.button) return;
-
-    if (navigator.share) {
-      this.button.addEventListener('click', this.handleNativeShare.bind(this));
-    } else {
-      this.button.addEventListener('click', this.togglePanel.bind(this));
-      if (this.copyButton) {
-        this.copyButton.addEventListener('click', this.copyToClipboard.bind(this));
-      }
-    }
-  }
-
-  async handleNativeShare() {
-    try {
-      await navigator.share({
-        url: this.shareUrl,
-        title: document.title,
-      });
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        // User cancelled -- not an error
-        this.togglePanel();
-      }
-    }
-  }
-
-  togglePanel() {
-    if (!this.panel) return;
-    this.panel.classList.toggle('hidden');
-    const isOpen = !this.panel.classList.contains('hidden');
-    this.button.setAttribute('aria-expanded', isOpen);
-    if (isOpen && this.urlInput) {
-      this.urlInput.focus();
-      this.urlInput.select();
-    }
-  }
-
-  async copyToClipboard() {
-    if (!this.urlInput) return;
-    try {
-      await navigator.clipboard.writeText(this.urlInput.value);
-      if (this.copyButton) {
-        const original = this.copyButton.textContent;
-        this.copyButton.textContent = this.copyButton.dataset.success || 'Copied!';
-        setTimeout(() => {
-          this.copyButton.textContent = original;
-        }, 2000);
-      }
-    } catch {
-      this.urlInput.select();
-      document.execCommand('copy');
-    }
-  }
-}
-
 if (!customElements.get('share-button')) {
-  customElements.define('share-button', ShareButton);
+  customElements.define(
+    'share-button',
+    class ShareButton extends DetailsDisclosure {
+      constructor() {
+        super();
+
+        this.elements = {
+          shareButton: this.querySelector('button'),
+          shareSummary: this.querySelector('summary'),
+          closeButton: this.querySelector('.share-button__close'),
+          successMessage: this.querySelector('[id^="ShareMessage"]'),
+          urlInput: this.querySelector('input'),
+        };
+        this.urlToShare = this.elements.urlInput ? this.elements.urlInput.value : document.location.href;
+
+        if (navigator.share) {
+          this.mainDetailsToggle.setAttribute('hidden', '');
+          this.elements.shareButton.classList.remove('hidden');
+          this.elements.shareButton.addEventListener('click', () => {
+            navigator.share({ url: this.urlToShare, title: document.title });
+          });
+        } else {
+          this.mainDetailsToggle.addEventListener('toggle', this.toggleDetails.bind(this));
+          this.mainDetailsToggle
+            .querySelector('.share-button__copy')
+            .addEventListener('click', this.copyToClipboard.bind(this));
+          this.mainDetailsToggle.querySelector('.share-button__close').addEventListener('click', this.close.bind(this));
+        }
+      }
+
+      toggleDetails() {
+        if (!this.mainDetailsToggle.open) {
+          this.elements.successMessage.classList.add('hidden');
+          this.elements.successMessage.textContent = '';
+          this.elements.closeButton.classList.add('hidden');
+          this.elements.shareSummary.focus();
+        }
+      }
+
+      copyToClipboard() {
+        navigator.clipboard.writeText(this.elements.urlInput.value).then(() => {
+          this.elements.successMessage.classList.remove('hidden');
+          this.elements.successMessage.textContent = window.accessibilityStrings.shareSuccess;
+          this.elements.closeButton.classList.remove('hidden');
+          this.elements.closeButton.focus();
+        });
+      }
+
+      updateUrl(url) {
+        this.urlToShare = url;
+        this.elements.urlInput.value = url;
+      }
+    }
+  );
 }

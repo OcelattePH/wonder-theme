@@ -1,157 +1,107 @@
-{% render 'section-padding' %}
-
 {%- style -%}
-  #shopify-section-{{ section.id }} .faq__wrapper {
-    max-width: 80rem;
-    margin: 0 auto;
-    padding: 0 1.5rem;
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
   }
 
   @media screen and (min-width: 750px) {
-    #shopify-section-{{ section.id }} .faq__wrapper {
-      padding: 0 5rem;
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
     }
-  }
-
-  #shopify-section-{{ section.id }} .faq__heading {
-    font-size: 2.4rem;
-    text-align: center;
-    margin: 0 0 3rem;
-  }
-
-  @media screen and (min-width: 750px) {
-    #shopify-section-{{ section.id }} .faq__heading {
-      font-size: 3rem;
-    }
-  }
-
-  #shopify-section-{{ section.id }} .faq__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  #shopify-section-{{ section.id }} .faq__item {
-    border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
-  }
-
-  #shopify-section-{{ section.id }} .faq__item:first-child {
-    border-top: 1px solid rgba(var(--color-foreground), 0.1);
-  }
-
-  #shopify-section-{{ section.id }} .faq__question {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 1.8rem 0;
-    font-size: 1.6rem;
-    font-weight: 600;
-    cursor: pointer;
-    list-style: none;
-    line-height: 1.4;
-    text-align: left;
-  }
-
-  #shopify-section-{{ section.id }} .faq__question::-webkit-details-marker {
-    display: none;
-  }
-
-  #shopify-section-{{ section.id }} .faq__question::marker {
-    content: '';
-  }
-
-  #shopify-section-{{ section.id }} .faq__icon {
-    flex-shrink: 0;
-    width: 20px;
-    height: 20px;
-    margin-left: 1.5rem;
-    transition: transform 0.3s ease;
-  }
-
-  #shopify-section-{{ section.id }} .faq__item[open] .faq__icon {
-    transform: rotate(45deg);
-  }
-
-  #shopify-section-{{ section.id }} .faq__answer {
-    padding: 0 0 1.8rem;
-    font-size: 1.4rem;
-    line-height: 1.7;
-  }
-
-  #shopify-section-{{ section.id }} .faq__answer p {
-    margin: 0 0 1rem;
-  }
-
-  #shopify-section-{{ section.id }} .faq__answer p:last-child {
-    margin-bottom: 0;
   }
 {%- endstyle -%}
 
-<div class="faq color-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
-  <div class="faq__wrapper">
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width page-width--narrow section-{{ section.id }}-padding">
     {%- if section.settings.heading != blank -%}
-      <h2 class="faq__heading">{{ section.settings.heading | escape }}</h2>
+      <h2 class="title inline-richtext {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+        style="text-align: center; margin-bottom: 4rem;"
+      >
+        {{ section.settings.heading }}
+      </h2>
     {%- endif -%}
 
-    {%- if section.blocks.size > 0 -%}
-      <div class="faq__list" role="list">
-        {%- for block in section.blocks -%}
-          <details class="faq__item" {{ block.shopify_attributes }}>
-            <summary class="faq__question">
-              <span>{{ block.settings.heading | escape }}</span>
-              <svg class="faq__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-            </summary>
-            <div class="faq__answer rte">
-              {{ block.settings.answer }}
-            </div>
-          </details>
-        {%- endfor -%}
-      </div>
-
-      {%- comment -%} FAQ structured data for search engines {%- endcomment -%}
-      <script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          "mainEntity": [
-            {%- for block in section.blocks -%}
-              {
-                "@type": "Question",
-                "name": {{ block.settings.heading | json }},
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": {{ block.settings.answer | strip_html | json }}
-                }
-              }{% unless forloop.last %},{% endunless %}
-            {%- endfor -%}
-          ]
-        }
-      </script>
-    {%- endif -%}
+    <div class="faq-list">
+      {%- for block in section.blocks -%}
+        <details class="faq-item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          {{ block.shopify_attributes }}
+          {% if settings.animations_reveal_on_scroll %}
+            data-cascade
+            style="--animation-order: {{ forloop.index }};"
+          {% endif %}
+        >
+          <summary>
+            <span>{{ block.settings.heading }}</span>
+            <span class="faq-item__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </summary>
+          <div class="faq-item__answer rte">
+            {{ block.settings.answer }}
+          </div>
+        </details>
+      {%- endfor -%}
+    </div>
   </div>
 </div>
 
+{%- if section.blocks.size > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- for block in section.blocks -%}
+          {
+            "@type": "Question",
+            "name": {{ block.settings.heading | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ block.settings.answer | strip_html | json }}
+            }
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
+
 {% schema %}
 {
-  "name": "FAQ accordion",
+  "name": "FAQ",
   "tag": "section",
   "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
   "settings": [
     {
-      "type": "text",
+      "type": "inline_richtext",
       "id": "heading",
       "label": "Heading",
-      "default": "Frequently asked questions"
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "t:sections.all.heading_size.options__1.label" },
+        { "value": "h1", "label": "t:sections.all.heading_size.options__2.label" },
+        { "value": "h0", "label": "t:sections.all.heading_size.options__3.label" }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "Color scheme",
+      "label": "t:sections.all.colors.label",
       "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
     },
     {
       "type": "range",
@@ -160,8 +110,8 @@
       "max": 100,
       "step": 4,
       "unit": "px",
-      "default": 36,
-      "label": "Top padding"
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
     },
     {
       "type": "range",
@@ -170,8 +120,8 @@
       "max": 100,
       "step": 4,
       "unit": "px",
-      "default": 36,
-      "label": "Bottom padding"
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
     }
   ],
   "blocks": [
@@ -189,43 +139,19 @@
           "type": "richtext",
           "id": "answer",
           "label": "Answer",
-          "default": "<p>We offer a 30-day return policy on all items. Products must be in their original condition and packaging. Contact our support team to start a return.</p>"
+          "default": "<p>We offer a 30-day return policy on all unused products in their original packaging.</p>"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "FAQ accordion",
+      "name": "FAQ",
       "blocks": [
-        {
-          "type": "question",
-          "settings": {
-            "heading": "What is your return policy?",
-            "answer": "<p>We offer a 30-day return policy on all items. Products must be in their original condition and packaging. Contact our support team to start a return.</p>"
-          }
-        },
-        {
-          "type": "question",
-          "settings": {
-            "heading": "How long does shipping take?",
-            "answer": "<p>Standard shipping typically takes 5 to 7 business days. Expedited shipping options are available at checkout for faster delivery.</p>"
-          }
-        },
-        {
-          "type": "question",
-          "settings": {
-            "heading": "Do you ship internationally?",
-            "answer": "<p>Yes, we ship to most countries worldwide. International shipping times vary by destination. Customs duties and taxes may apply and are the responsibility of the buyer.</p>"
-          }
-        },
-        {
-          "type": "question",
-          "settings": {
-            "heading": "How can I track my order?",
-            "answer": "<p>Once your order ships, you will receive a confirmation email with a tracking number. You can use this number to track your package on our website or the carrier's site.</p>"
-          }
-        }
+        { "type": "question", "settings": { "heading": "What are your products made of?", "answer": "<p>All our products are made with 100% natural, sustainably sourced ingredients.</p>" } },
+        { "type": "question", "settings": { "heading": "How long does shipping take?", "answer": "<p>Standard shipping takes 3-5 business days. Express shipping is available at checkout.</p>" } },
+        { "type": "question", "settings": { "heading": "Do you offer international shipping?", "answer": "<p>Yes, we ship to over 50 countries worldwide. Shipping rates are calculated at checkout.</p>" } },
+        { "type": "question", "settings": { "heading": "Are your products cruelty-free?", "answer": "<p>Absolutely. We never test on animals and all our products are certified cruelty-free.</p>" } }
       ]
     }
   ]

@@ -1,113 +1,192 @@
-/*
- * product-form.js
- * Custom element <product-form> that handles AJAX cart submission,
- * loading states, error display, and cart-update events.
- * Depends on: constants.js, pubsub.js, global.js
- */
-
 if (!customElements.get('product-form')) {
-  class ProductForm extends HTMLElement {
-    constructor() {
-      super();
-      this.form = this.querySelector('form[data-type="add-to-cart-form"]');
-      this.submitButton = this.querySelector('[type="submit"]');
-      this.errorWrapper = this.querySelector('.product-form__error-message-wrapper');
-      this.errorMessage = this.querySelector('.product-form__error-message');
-    }
+  customElements.define(
+    'product-form',
+    class ProductForm extends HTMLElement {
+      constructor() {
+        super();
 
-    connectedCallback() {
-      if (!this.form) return;
-      this.form.addEventListener('submit', this.onSubmitHandler.bind(this));
-      this.cartDrawer = document.querySelector('cart-drawer');
-      this.cartNotification = document.querySelector('cart-notification');
-    }
+        this.form = this.querySelector('form');
+        this.variantIdInput.disabled = false;
+        this.form.addEventListener('submit', this.onSubmitHandler.bind(this));
+        this.cart = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
+        this.submitButton = this.querySelector('[type="submit"]');
+        this.submitButtonText = this.submitButton.querySelector('span');
 
-    async onSubmitHandler(event) {
-      event.preventDefault();
-      if (this.submitButton.disabled) return;
+        if (document.querySelector('cart-drawer')) this.submitButton.setAttribute('aria-haspopup', 'dialog');
 
-      this.handleLoading(true);
-      this.hideError();
-
-      const config = fetchConfig('json');
-      config.headers['X-Requested-With'] = 'XMLHttpRequest';
-      delete config.headers['Content-Type'];
-
-      const formData = new FormData(this.form);
-
-      // If a cart drawer or notification exists, add sections param
-      if (this.cartDrawer) {
-        formData.append(
-          'sections',
-          this.cartDrawer.getSectionsToRender
-            ? this.cartDrawer.getSectionsToRender().map((s) => s.id)
-            : []
-        );
-        formData.append('sections_url', window.location.pathname);
+        this.hideErrors = this.dataset.hideErrors === 'true';
       }
 
-      config.body = formData;
+      onSubmitHandler(evt) {
+        evt.preventDefault();
+        if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
 
-      try {
-        const response = await fetch(window.routes.cart_add_url, config);
-        const data = await response.json();
+        this.handleErrorMessage();
 
-        if (!response.ok) {
-          this.handleErrorMessage(data.description || data.message);
-          return;
-        }
-
-        // Publish cart-update event
-        publish(PUB_SUB_EVENTS.cartUpdate, {
-          source: 'product-form',
-          productVariantId: formData.get('id'),
-          cartData: data,
-        });
-
-        // Open cart drawer or notification
-        if (this.cartDrawer) {
-          this.cartDrawer.renderContents(data);
-        } else if (this.cartNotification) {
-          this.cartNotification.renderContents(data);
-        } else {
-          // Fallback: redirect to cart
-          window.location.href = window.routes.cart_url;
-        }
-      } catch (error) {
-        console.error('Product form submission error:', error);
-        this.handleErrorMessage(window.cartStrings.error);
-      } finally {
-        this.handleLoading(false);
-      }
-    }
-
-    handleLoading(isLoading) {
-      if (!this.submitButton) return;
-
-      if (isLoading) {
-        this.submitButton.setAttribute('aria-disabled', 'true');
+        this.submitButton.setAttribute('aria-disabled', true);
         this.submitButton.classList.add('loading');
-      } else {
-        this.submitButton.removeAttribute('aria-disabled');
-        this.submitButton.classList.remove('loading');
+        this.querySelector('.loading__spinner').classList.remove('hidden');
+
+        const config = fetchConfig('javascript');
+        config.headers['X-Requested-With'] = 'XMLHttpRequest';
+        delete config.headers['Content-Type'];
+
+        const formData = new FormData(this.form);
+        if (this.cart) {
+          formData.append(
+            'sections',
+            this.cart.getSectionsToRender().map((section) => section.id)
+          );
+          formData.append('sections_url', window.location.pathname);
+          this.cart.setActiveElement(document.activeElement);
+        }
+        config.body = formData;
+
+        const variantId = formData.get('id');
+        const quantity = parseInt(formData.get('quantity')) || 1;
+        const linesUpdateDeferred = this.createCartLinesUpdateEvent(variantId, quantity);
+
+        fetch(`${routes.cart_add_url}`, config)
+          .then((response) => response.json())
+          .then((response) => {
+            if (response.status) {
+              publish(PUB_SUB_EVENTS.cartError, {
+                source: 'product-form',
+                productVariantId: variantId,
+                errors: response.errors || response.description,
+                message: response.message,
+              });
+              this.handleErrorMessage(response.description);
+              this.dispatchCartErrorEvent(response.description || response.message, 'INVALID');
+              linesUpdateDeferred?.reject(new Error(response.description || response.message));
+
+              const soldOutMessage = this.submitButton.querySelector('.sold-out-message');
+              if (!soldOutMessage) return;
+              this.submitButton.setAttribute('aria-disabled', true);
+              this.submitButtonText.classList.add('hidden');
+              soldOutMessage.classList.remove('hidden');
+              this.error = true;
+              return;
+            } else if (!this.cart) {
+              this.resolveCartLinesUpdate(linesUpdateDeferred);
+              window.location = window.routes.cart_url;
+              return;
+            }
+
+            this.resolveCartLinesUpdate(linesUpdateDeferred);
+
+            const startMarker = CartPerformance.createStartingMarker('add:wait-for-subscribers');
+            if (!this.error)
+              publish(PUB_SUB_EVENTS.cartUpdate, {
+                source: 'product-form',
+                productVariantId: variantId,
+                cartData: response,
+              }).then(() => {
+                CartPerformance.measureFromMarker('add:wait-for-subscribers', startMarker);
+              });
+            this.error = false;
+            const quickAddModal = this.closest('quick-add-modal');
+            if (quickAddModal) {
+              document.body.addEventListener(
+                'modalClosed',
+                () => {
+                  setTimeout(() => {
+                    CartPerformance.measure("add:paint-updated-sections", () => {
+                      this.cart.renderContents(response);
+                    });
+                  });
+                },
+                { once: true }
+              );
+              quickAddModal.hide(true);
+            } else {
+              CartPerformance.measure("add:paint-updated-sections", () => {
+                this.cart.renderContents(response);
+              });
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+            this.dispatchCartErrorEvent(e.message || 'Network error', 'SERVICE_UNAVAILABLE');
+            linesUpdateDeferred?.reject(e);
+          })
+          .finally(() => {
+            this.submitButton.classList.remove('loading');
+            if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
+            if (!this.error) this.submitButton.removeAttribute('aria-disabled');
+            this.querySelector('.loading__spinner').classList.add('hidden');
+
+            CartPerformance.measureFromEvent("add:user-action", evt);
+          });
+      }
+
+      handleErrorMessage(errorMessage = false) {
+        if (this.hideErrors) return;
+
+        this.errorMessageWrapper =
+          this.errorMessageWrapper || this.querySelector('.product-form__error-message-wrapper');
+        if (!this.errorMessageWrapper) return;
+        this.errorMessage = this.errorMessage || this.errorMessageWrapper.querySelector('.product-form__error-message');
+
+        this.errorMessageWrapper.toggleAttribute('hidden', !errorMessage);
+
+        if (errorMessage) {
+          this.errorMessage.textContent = errorMessage;
+        }
+      }
+
+      toggleSubmitButton(disable = true, text) {
+        if (disable) {
+          this.submitButton.setAttribute('disabled', 'disabled');
+          if (text) this.submitButtonText.textContent = text;
+        } else {
+          this.submitButton.removeAttribute('disabled');
+          this.submitButtonText.textContent = window.variantStrings.addToCart;
+        }
+      }
+
+      createCartLinesUpdateEvent(variantId, quantity) {
+        const { CartLinesUpdateEvent } = window.StandardEvents || {};
+        if (!CartLinesUpdateEvent) return null;
+
+        const deferred = CartLinesUpdateEvent.createPromise();
+        this.dispatchEvent(
+          new CartLinesUpdateEvent({
+            action: 'add',
+            context: 'product',
+            lines: [{ merchandiseId: variantId, quantity }],
+            promise: deferred.promise,
+          })
+        );
+        return deferred;
+      }
+
+      resolveCartLinesUpdate(deferred) {
+        if (!deferred) return;
+        const { CartLinesUpdateEvent } = window.StandardEvents || {};
+        if (!CartLinesUpdateEvent) return;
+
+        const pendingCartDataPromise = typeof CartItems !== 'undefined'
+          ? CartItems.fetchCartData()
+          : fetch(`${routes.cart_url}.json`).then((response) => response.json());
+
+        pendingCartDataPromise
+          .then((cart) => {
+            if (!cart?.currency) return deferred.reject(new Error('Missing currency in cart response'));
+            deferred.resolve({ cart: CartLinesUpdateEvent.createCartFromAjaxResponse(cart) });
+          })
+          .catch((e) => deferred.reject(e));
+      }
+
+      dispatchCartErrorEvent(message, code) {
+        const { CartErrorEvent } = window.StandardEvents || {};
+        if (!CartErrorEvent) return;
+        this.dispatchEvent(new CartErrorEvent({ error: message, code }));
+      }
+
+      get variantIdInput() {
+        return this.form.querySelector('[name=id]');
       }
     }
-
-    handleErrorMessage(message = false) {
-      if (!this.errorWrapper || !this.errorMessage) return;
-
-      if (message) {
-        this.errorWrapper.removeAttribute('hidden');
-        this.errorMessage.textContent = message;
-      }
-    }
-
-    hideError() {
-      if (!this.errorWrapper) return;
-      this.errorWrapper.setAttribute('hidden', '');
-      if (this.errorMessage) this.errorMessage.textContent = '';
-    }
-  }
-
-  customElements.define('product-form', ProductForm);
+  );
 }
