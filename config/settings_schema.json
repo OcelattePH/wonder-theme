@@ -1173,6 +1173,11 @@
         "id": "brand_show_social_icons",
         "label": "t:settings_schema.brand_information.settings.brand_show_social_icons.label",
         "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "Social sharing image"
       }
     ]
   },

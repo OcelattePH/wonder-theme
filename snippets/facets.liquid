@@ -1,12 +1,3 @@
-{% doc %}
-  @param results {Object} - Collection or search results object (required)
-  @param enable_filtering {Boolean} - Whether to show filter controls (default: true)
-  @param enable_sorting {Boolean} - Whether to show sort dropdown (default: true)
-  @param filter_type {String} - Layout for filters: "horizontal", "vertical", or "drawer" (default: "drawer")
-  @param paginate {Object} - Paginate object from paginate block
-  @param section_id {String} - Unique section identifier
-{% enddoc %}
-
 {%- liquid
   unless enable_filtering == false
     assign enable_filtering = true

@@ -1,9 +1,3 @@
-{% doc %}
-  Reusable email signup form.
-  @param {string} id - Unique identifier for the form instance
-  @param {string} class - CSS class(es) to apply to the wrapper
-{% enddoc %}
-
 {%- assign form_id = id | default: 'EmailSignup' -%}
 
 <div class="email-signup{% if class %} {{ class }}{% endif %}">

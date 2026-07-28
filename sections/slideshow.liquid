@@ -35,12 +35,19 @@
         >
           {%- if block.settings.image != blank -%}
             <div class="slideshow__media">
+              {%- if forloop.first -%}
+                {%- assign slide_loading = 'eager' -%}
+                {%- assign slide_fetchpriority = 'high' -%}
+              {%- else -%}
+                {%- assign slide_loading = 'lazy' -%}
+                {%- assign slide_fetchpriority = 'auto' -%}
+              {%- endif -%}
               {{
                 block.settings.image
                 | image_url: width: block.settings.image.width
                 | image_tag:
-                  loading: forloop.first | ternary: 'eager', 'lazy',
-                  fetchpriority: forloop.first | ternary: 'high', 'auto',
+                  loading: slide_loading,
+                  fetchpriority: slide_fetchpriority,
                   widths: '375, 750, 1100, 1500, 1780, 2000, 3000',
                   sizes: '100vw',
                   class: 'slideshow__image'

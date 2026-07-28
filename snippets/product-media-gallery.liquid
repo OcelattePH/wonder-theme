@@ -1,15 +1,3 @@
-{% doc %}
-  Renders the product media gallery (images, video, 3D models).
-
-  @param {product} product - The product object
-  @param {array} variant_images - Images attached to variants (optional)
-  @param {string} media_size - Gallery size: small, medium, large (default: "large")
-  @param {string} media_layout - Layout: stacked, columns, thumbnail_slider (default: "stacked")
-  @param {boolean} enable_video_looping - Loop videos (default: false)
-  @param {string} enable_image_zoom - Zoom mode: lightbox, hover, none (default: "lightbox")
-  @param {string} mobile_thumbnails - Show thumbnails on mobile: hide, show (default: "hide")
-{% enddoc %}
-
 {%- if media_size == blank -%}
   {%- assign media_size = 'large' -%}
 {%- endif -%}

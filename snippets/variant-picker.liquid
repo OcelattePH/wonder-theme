@@ -1,11 +1,3 @@
-{% doc %}
-  Renders variant option selectors as pills (radio buttons) or dropdowns.
-
-  @param {product} product - The product object
-  @param {block} block - The section block (contains picker_type setting)
-  @param {string} product_form_id - The product form element ID
-{% enddoc %}
-
 {%- assign picker_type = block.settings.picker_type | default: 'pills' -%}
 
 {%- unless product.has_only_default_variant -%}

@@ -1,10 +1,3 @@
-{% doc %}
-  Renders a quantity input with minus/plus buttons.
-  Relies on the QuantityInput custom element defined in global.js.
-
-  @param {string} id - The input ID for label association
-{% enddoc %}
-
 <quantity-input class="quantity">
   <button class="quantity__button" name="minus" type="button" aria-label="{{ 'products.product.quantity.decrease' | t }}">
     {% render 'icon-minus' %}

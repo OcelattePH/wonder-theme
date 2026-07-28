@@ -1,9 +1,3 @@
-{% doc %}
-  Share button using Web Share API with clipboard fallback.
-  @param {string} share_link - The URL to share
-  @param {block} block - The block object (for shopify_attributes)
-{% enddoc %}
-
 <share-button class="share-button" data-url="{{ share_link }}">
   <button class="share-button__button button--tertiary" type="button">
     {% render 'icon-share' %}

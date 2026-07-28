@@ -1,17 +1,3 @@
-{% doc %}
-  Renders a product card with image, badges, quick-add, and product info.
-
-  @param {product} product - The product object (required)
-  @param {string} media_aspect_ratio - Image aspect ratio: "adapt", "portrait", "square" (default: "adapt")
-  @param {boolean} show_secondary_image - Show hover-swap image (default: false)
-  @param {boolean} show_vendor - Show product vendor (default: false)
-  @param {boolean} show_rating - Show product rating (default: false)
-  @param {string} quick_add - Quick-add mode: "none", "standard" (default: "none")
-  @param {string} section_id - Parent section ID
-  @param {boolean} lazy_load - Lazy-load images (default: true)
-  @param {number} columns - Number of grid columns, used for sizes attribute
-{% enddoc %}
-
 {%- liquid
   assign media_aspect_ratio = media_aspect_ratio | default: 'adapt'
   assign show_secondary_image = show_secondary_image | default: false

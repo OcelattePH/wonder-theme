@@ -1,10 +1,3 @@
-{% doc %}
-  Renders pagination controls for paginated collections or search results.
-
-  @param {paginate} paginate - Shopify paginate object (required)
-  @param {string} anchor - Optional anchor ID for scroll position after navigation
-{% enddoc %}
-
 {%- if paginate.pages > 1 -%}
   {%- liquid
     assign anchor_tag = ''

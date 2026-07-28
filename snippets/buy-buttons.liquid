@@ -1,12 +1,3 @@
-{% doc %}
-  Renders add-to-cart button and dynamic checkout buttons.
-
-  @param {block} block - The section block (contains show_dynamic_checkout setting)
-  @param {product} product - The product object
-  @param {string} product_form_id - The product form element ID
-  @param {string} section_id - The parent section ID
-{% enddoc %}
-
 {%- assign current_variant = product.selected_or_first_available_variant -%}
 
 <div class="buy-buttons" id="BuyButtons-{{ section_id }}">
