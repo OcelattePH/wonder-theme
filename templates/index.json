@@ -64,7 +64,7 @@
       "type": "hero-category-cards",
       "blocks": {
         "card_1": {
-          "type": "card",
+          "type": "category",
           "settings": {
             "heading": "Skincare",
             "subheading": "Nourish your natural glow",
@@ -73,7 +73,7 @@
           }
         },
         "card_2": {
-          "type": "card",
+          "type": "category",
           "settings": {
             "heading": "Haircare",
             "subheading": "Stronger, healthier hair",
@@ -82,7 +82,7 @@
           }
         },
         "card_3": {
-          "type": "card",
+          "type": "category",
           "settings": {
             "heading": "Body Care",
             "subheading": "Clean, everyday essentials",
@@ -102,10 +102,10 @@
     "marquee_band": {
       "type": "scrolling-marquee",
       "blocks": {
-        "text_1": { "type": "text", "settings": { "text": "Clean Beauty" } },
-        "text_2": { "type": "text", "settings": { "text": "Cruelty Free" } },
-        "text_3": { "type": "text", "settings": { "text": "Natural Ingredients" } },
-        "text_4": { "type": "text", "settings": { "text": "Sustainable" } }
+        "text_1": { "type": "text_item", "settings": { "text": "Clean Beauty" } },
+        "text_2": { "type": "text_item", "settings": { "text": "Cruelty Free" } },
+        "text_3": { "type": "text_item", "settings": { "text": "Natural Ingredients" } },
+        "text_4": { "type": "text_item", "settings": { "text": "Sustainable" } }
       },
       "block_order": ["text_1", "text_2", "text_3", "text_4"],
       "settings": {
@@ -285,9 +285,9 @@
       "type": "testimonials",
       "blocks": {
         "testimonial_1": {
-          "type": "testimonial",
+          "type": "quote",
           "settings": {
-            "quote": "The best skincare I've ever used. My skin has never looked this radiant.",
+            "text": "The best skincare I've ever used. My skin has never looked this radiant.",
             "author": "Sarah M.",
             "rating": 5
           }
