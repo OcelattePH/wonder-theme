@@ -8,18 +8,24 @@
    TYPOGRAPHY
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Figtree:wght@300;400;500;600;700&display=swap');
 
 :root {
   --wonder-heading-family: 'Cormorant', Georgia, 'Times New Roman', serif;
-  --wonder-body-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  --wonder-body-family: 'Figtree', 'Helvetica Neue', Arial, sans-serif;
   --wonder-accent-color: #D68416;
   --wonder-green: #074745;
   --wonder-cream: #F7F2E9;
   --wonder-tan: #F4E9DA;
+  --wonder-sage: #ECF5E9;
   --wonder-dark: #151515;
+  --wonder-muted: #717171;
   --wonder-sale-red: #CF4A4A;
+  --wonder-star-gold: #FCC97E;
   --wonder-border: rgba(21, 21, 21, 0.1);
+  --wonder-input-border: #D6D6D6;
+  --wonder-card-radius: 14px;
+  --wonder-pill-radius: 30px;
   --wonder-transition: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
@@ -137,25 +143,25 @@ button.shopify-payment-button__button {
 
 .card {
   border: none;
-  border-radius: 0;
+  border-radius: var(--wonder-card-radius);
   box-shadow: none;
   background: transparent;
 }
 
 .card--card {
   border: none;
-  border-radius: 0;
+  border-radius: var(--wonder-card-radius);
   box-shadow: none;
 }
 
 .card--card .card__inner {
   border: none;
-  border-radius: 0;
+  border-radius: var(--wonder-card-radius);
 }
 
 .card__media {
   overflow: hidden;
-  border-radius: 0;
+  border-radius: var(--wonder-card-radius);
 }
 
 .card__media img {
@@ -191,10 +197,15 @@ button.shopify-payment-button__button {
 }
 
 .card-information__wrapper .caption-with-letter-spacing {
-  font-size: 1rem;
-  letter-spacing: 0.14em;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.55;
+  color: var(--wonder-muted);
+  font-weight: 500;
+}
+
+.price {
+  font-family: var(--wonder-body-family);
   font-weight: 500;
 }
 
@@ -202,13 +213,31 @@ button.shopify-payment-button__button {
   color: var(--wonder-sale-red);
 }
 
+.price__sale .price-item--regular {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
 .badge {
-  border-radius: 30px;
-  font-size: 1rem;
-  letter-spacing: 0.06em;
+  border-radius: var(--wonder-pill-radius);
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
   font-weight: 500;
   font-family: var(--wonder-body-family);
   padding: 0.4rem 1rem;
+}
+
+.card__badge .badge--sale {
+  background: var(--wonder-sale-red);
+  color: #fff;
+}
+
+.card-information .card__heading {
+  margin-top: 0.8rem;
+}
+
+.card-information .price {
+  margin-top: 0.4rem;
 }
 
 
@@ -725,8 +754,8 @@ header-drawer summary {
   font-size: 1.4rem;
   font-weight: 400;
   letter-spacing: 0.02em;
-  border-radius: 30px;
-  border: 1px solid rgba(var(--color-foreground), 0.15);
+  border-radius: var(--wonder-pill-radius);
+  border: 1px solid var(--wonder-input-border);
   padding: 1.4rem 2rem;
   min-height: 4.8rem;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -737,8 +766,8 @@ header-drawer summary {
 .select__select:focus,
 .customer .field input:focus,
 .form__input:focus {
-  border-color: rgba(var(--color-foreground), 0.4);
-  box-shadow: 0 0 0 1px rgba(var(--color-foreground), 0.1);
+  border-color: #4C4C4B;
+  box-shadow: none;
   outline: none;
 }
 
